@@ -1,0 +1,43 @@
+{
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf node_modules api/node_modules web/node_modules api/dist web/dist",
+    "preview": "pnpm --stream=true -r preview",
+    "dev": "pnpm --stream=true -r dev",
+    "ts": "pnpm --stream=true -r ts",
+    "ts:check": "pnpm --no-bail -r ts:check",
+    "db:push": "pnpm -C api exec drizzle-kit push",
+    "db:studio": "pnpm -C api exec drizzle-kit studio",
+    "compose": "BUILDKIT_PROGRESS=plain docker compose up --build",
+    "prepare": "husky",
+    "lint": "eslint --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier . --check",
+    "lint:fix": "eslint --report-unused-disable-directives --max-warnings 0 --fix",
+    "format:fix": "prettier . --write"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,yaml,yml,cjs,mjs,html,css,json}": "prettier --write",
+    "*.{ts,tsx}": "eslint --fix"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "vscode": "^1.22.0",
+    "node": "22.3.0",
+    "pnpm": "9.4.0"
+  },
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/node": "^22.0.2",
+    "@vpetryniak/eslint-config-base": "^0.0.6",
+    "eslint": "9.8.0",
+    "eslint-plugin-react-hooks": "next",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "husky": "^9.1.4",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "8.0.0"
+  },
+  "prettier": {}
+}

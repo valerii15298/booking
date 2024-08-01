@@ -1,0 +1,35 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsr generate && tsc && vite build",
+    "preview": "vite preview",
+    "ts": "tsc --noEmit --watch",
+    "ts:check": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,yaml,yml,cjs,mjs,html,css,json}": "prettier --write",
+    "*.{ts,tsx}": "eslint --fix"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@tanstack/react-query": "^5.51.18",
+    "@tanstack/react-router": "^1.46.0",
+    "@tanstack/router-devtools": "^1.46.0",
+    "@trpc/client": "next",
+    "@trpc/react-query": "next",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@tanstack/router-cli": "^1.45.13",
+    "@tanstack/router-vite-plugin": "^1.45.13",
+    "@tsconfig/vite-react": "^3.0.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.3.5"
+  }
+}
