@@ -9,18 +9,15 @@ const TanStackRouterDevtools =
         import("@tanstack/router-devtools").then((res) => ({
           default: res.TanStackRouterDevtools,
           // For Embedded Mode
-          // Default: res.TanStackRouterDevtoolsPanel
+          // default: res.TanStackRouterDevtoolsPanel,
         })),
       );
 export const Route = createRootRoute({
   component: () => (
     <>
-      <header>Hello</header>
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
       <Suspense>
-        <TanStackRouterDevtools />
+        <TanStackRouterDevtools position="top-right" />
       </Suspense>
     </>
   ),

@@ -4,7 +4,6 @@ import type { Context } from "./context.js";
 import { d, s } from "./db.js";
 import { zInt, zod } from "./zod.js";
 
-// eslint-disable-next-line id-length
 const t = initTRPC.context<Context>().create();
 
 export const appRouter = t.router({
@@ -27,7 +26,13 @@ export const appRouter = t.router({
 
   bookings: {
     list: t.procedure.query(async ({ ctx: { db } }) =>
-      db.query.bookings.findMany(),
+      (await db.select().from(s.bookings).orderBy(d.asc(s.bookings.from))).map(
+        (b) => ({
+          ...b,
+          from: b.from.getTime(),
+          to: b.to.getTime(),
+        }),
+      ),
     ),
 
     // CRUD

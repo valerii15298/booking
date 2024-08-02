@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./main.css";
 
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
