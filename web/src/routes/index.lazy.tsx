@@ -30,7 +30,9 @@ function Index() {
   return (
     <>
       <CreateBooking />
-      <pre>{JSON.stringify(bookings.data, null, 2)}</pre>
+      <pre className="w-fit bg-zinc-300 p-3">
+        {JSON.stringify(bookings.data, null, 2)}
+      </pre>
     </>
   );
 }
