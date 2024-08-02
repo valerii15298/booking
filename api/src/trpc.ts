@@ -1,8 +1,8 @@
 import { initTRPC } from "@trpc/server";
 
 import type { Context } from "./context.js";
-import { s } from "./db.js";
-import { zod } from "./zod.js";
+import { d, s } from "./db.js";
+import { zInt, zod } from "./zod.js";
 
 // eslint-disable-next-line id-length
 const t = initTRPC.context<Context>().create();
@@ -17,6 +17,37 @@ export const appRouter = t.router({
     create: t.procedure
       .input(zod.assetInput)
       .mutation(({ input, ctx: { db } }) => db.insert(s.assets).values(input)),
+
+    delete: t.procedure
+      .input(zInt)
+      .mutation(({ input, ctx: { db } }) =>
+        db.delete(s.assets).where(d.eq(s.assets.id, input)),
+      ),
+  },
+
+  bookings: {
+    list: t.procedure.query(async ({ ctx: { db } }) =>
+      db.query.bookings.findMany(),
+    ),
+
+    // CRUD
+    create: t.procedure
+      .input(zod.bookingInput)
+      .mutation(({ input, ctx: { db } }) =>
+        db.insert(s.bookings).values(input),
+      ),
+
+    update: t.procedure
+      .input(zod.booking)
+      .mutation(({ input: { id, ...input }, ctx: { db } }) =>
+        db.update(s.bookings).set(input).where(d.eq(s.bookings.id, id)),
+      ),
+
+    delete: t.procedure
+      .input(zInt)
+      .mutation(({ input, ctx: { db } }) =>
+        db.delete(s.bookings).where(d.eq(s.bookings.id, input)),
+      ),
   },
 });
 
