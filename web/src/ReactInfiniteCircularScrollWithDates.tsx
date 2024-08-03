@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { getDates, HOUR_IN_MS } from "./getDates";
 import type { UseState } from "./lib/types";
@@ -14,6 +14,12 @@ export function ReactInfiniteCircularScrollWithDates({
   const dates = getDates(startDate);
 
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  const layoutEffectRef = useRef(() => void null);
+  useLayoutEffect(() => {
+    layoutEffectRef.current();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layoutEffectRef.current]);
 
   useEffect(() => {
     if (!listRef.current) {
@@ -36,9 +42,9 @@ export function ReactInfiniteCircularScrollWithDates({
             return;
           }
           setStartDate((date) => date - HOUR_IN_MS);
-          setTimeout(() => {
+          layoutEffectRef.current = () => {
             firstItemRef.scrollIntoView();
-          });
+          };
         }
         onScroll?.(e);
       }}
