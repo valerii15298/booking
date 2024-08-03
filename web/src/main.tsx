@@ -23,11 +23,3 @@ ReactDOM.createRoot(document.getElementById("app")!).render(
     </Providers>
   </React.StrictMode>,
 );
-
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      NODE_ENV: "development" | "production" | undefined;
-    }
-  }
-}

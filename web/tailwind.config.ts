@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import type { PluginAPI } from "tailwindcss/types/config";
 import tailwindAnimate from "tailwindcss-animate";
 
 const config = {
@@ -70,7 +71,20 @@ const config = {
       },
     },
   },
-  plugins: [tailwindAnimate],
+  plugins: [
+    tailwindAnimate,
+    (p: PluginAPI) => {
+      p.addUtilities({
+        ".hide-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+        ".hide-scrollbar": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+        },
+      });
+    },
+  ],
 } satisfies Config;
 
 export default config;

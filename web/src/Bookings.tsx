@@ -1,85 +1,121 @@
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import { useRef, useState } from "react";
+import type { ResizeEnable } from "react-rnd";
+import { Rnd } from "react-rnd";
 
-import { Button } from "./components/ui/button";
+import { getDefaultStartDate, getEndDate } from "./getDates";
+import { ReactInfiniteCircularScrollWithDates } from "./ReactInfiniteCircularScrollWithDates";
 import { trpc } from "./trpc";
-import type { Types } from "./zod";
 
-const DAY_FULL = 24 * 60 * 60 * 1000; // 100 in panel size is 1 day
-// const DAY_HALF = DAY_FULL / 2;
-// const DAY_QUARTER = DAY_FULL / 4;
-const PANEL_MAX_SIZE = 100;
-const startDate = new Date();
-startDate.setHours(0, 0, 0, 0);
-const endDate = new Date();
-endDate.setHours(23, 59, 59, 999);
+const enableResizing: ResizeEnable = {
+  top: true,
+  right: false,
+  bottom: true,
+  left: false,
+  topRight: false,
+  bottomRight: false,
+  bottomLeft: false,
+  topLeft: false,
+};
 
-function panelSizeMsToPercentage(interval: number) {
-  return (interval * PANEL_MAX_SIZE) / DAY_FULL;
-}
-
-export function Bookings({ id: assetId, name }: Types.Asset) {
+export function AssetsBookings() {
+  const [startDate, setStartDate] = useState(getDefaultStartDate);
+  const assetsQuery = trpc.assets.list.useQuery();
+  const [scrollHeight, setScrollHeight] = useState(0);
   const bookingsQuery = trpc.bookings.list.useQuery();
+  const refs = useRef<Record<number, HTMLElement>>({});
+
+  const endDate = getEndDate(startDate);
   if (bookingsQuery.isPending) {
     return <>Loading...</>;
   }
   if (bookingsQuery.isError) {
     return <>{bookingsQuery.error.message}</>;
   }
-  const assetBookings = bookingsQuery.data.filter(
-    (booking) => booking.assetId === assetId,
-  );
-  const panelsSizesInMs = assetBookings.reduce<number[]>(
-    (acc, { from, to }, i) => [
-      ...acc,
-      to - from,
-      (assetBookings[i + 1]?.from ?? endDate.getTime()) - to,
-    ],
-    [],
-  );
-  const panelsSizes = panelsSizesInMs.map(panelSizeMsToPercentage);
-
-  const panelsJsx = panelsSizes
-    .map((size, i) => (
-      <ResizablePanel
-        key={i}
-        order={i}
-        defaultSize={size}
-        className={i % 2 ? undefined : "bg-slate-600"}
-      />
-    ))
-    .flatMap((panel, i) => [<ResizableHandle key={-i - 1} />, panel]);
-
-  return (
-    <section className="inline-block h-full px-2">
-      <Button className="m-auto w-fit text-center">{name}</Button>
-      <ResizablePanelGroup
-        className="h-full rounded-lg border"
-        direction="vertical"
-      >
-        <ResizablePanel />
-        {panelsJsx}
-      </ResizablePanelGroup>
-    </section>
-  );
-}
-
-export function AssetsBookings() {
-  const assetsQuery = trpc.assets.list.useQuery();
   if (assetsQuery.isPending) {
     return <>Loading...</>;
   }
   if (assetsQuery.isError) {
     return <>{assetsQuery.error.message}</>;
   }
+
+  // startDate -> 0 (pixels)
+  // endDate -> scrollHeight (pixels)
+  // x -> (x - startDate) * scrollHeight / (endDate - startDate) (pixels)
+
+  function dateToY(ts: number) {
+    return ((ts - startDate) * scrollHeight) / (endDate - startDate);
+  }
+
   return (
-    <main className="h-full">
-      {assetsQuery.data.map((asset) => (
-        <Bookings key={asset.id} {...asset} />
-      ))}
+    <main className="flex h-full flex-col">
+      <div className="flex h-full">
+        <ReactInfiniteCircularScrollWithDates
+          {...{ startDate, setStartDate }}
+          onScroll={(e) => {
+            if (!scrollHeight) setScrollHeight(e.currentTarget.scrollHeight);
+            for (const ref of Object.values(refs.current)) {
+              ref.scrollTop = e.currentTarget.scrollTop;
+            }
+          }}
+        />
+        {assetsQuery.data.map((asset) => {
+          const assetBookings = bookingsQuery.data
+            .filter((b) => b.assetId === asset.id)
+            .filter((b) => b.from >= startDate && b.to <= endDate);
+          return (
+            <section
+              key={asset.id}
+              ref={(e) => {
+                if (e) {
+                  refs.current[asset.id] = e;
+                } else {
+                  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                  delete refs.current[asset.id];
+                }
+              }}
+              className="relative w-32 overflow-y-hidden"
+            >
+              <div
+                style={{
+                  minHeight: scrollHeight,
+                  maxHeight: scrollHeight,
+                  height: scrollHeight,
+                }}
+              >
+                {assetBookings.map(({ from, to, id }) => (
+                  <Rnd
+                    className="bg-blue-500"
+                    key={id}
+                    bounds="parent"
+                    enableResizing={enableResizing}
+                    size={{
+                      width: "100%",
+                      height: dateToY(to) - dateToY(from),
+                    }}
+                    position={{
+                      x: 0,
+                      y: dateToY(from),
+                    }}
+                    // onDragStop={(_e, d) => {
+                    //   const _ = d.y;
+                    // }}
+
+                    // onResizeStop={(_e, _direction, ref, _delta, position) => {
+                    //   const _ = {
+                    //     width: "100%",
+                    //     height: ref.style.height,
+                    //     ...position,
+                    //   };
+                    // }}
+                  >
+                    {new Date(from).toLocaleTimeString()}
+                  </Rnd>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </div>
     </main>
   );
 }
