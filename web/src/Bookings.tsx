@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
+import { Button } from "./components/ui/button";
 import { getDefaultStartDate, getEndDate } from "./getDates";
 import { ReactInfiniteCircularScrollWithDates } from "./ReactInfiniteCircularScrollWithDates";
 import { trpc } from "./trpc";
@@ -48,7 +49,13 @@ export function AssetsBookings() {
 
   return (
     <main className="flex h-full flex-col">
-      <div className="flex h-full">
+      <header>
+        <Button>Settings</Button>
+        {assetsQuery.data.map((a) => (
+          <Button key={a.id}>{a.name}</Button>
+        ))}
+      </header>
+      <div className="flex overflow-hidden">
         <ReactInfiniteCircularScrollWithDates
           {...{ startDate, setStartDate }}
           onScroll={(e) => {
