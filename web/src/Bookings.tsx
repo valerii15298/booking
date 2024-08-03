@@ -2,7 +2,14 @@ import { useRef, useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
-import { Button } from "./components/ui/button";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { getDefaultStartDate, getEndDate } from "./getDates";
 import { ReactInfiniteCircularScrollWithDates } from "./ReactInfiniteCircularScrollWithDates";
 import { trpc } from "./trpc";
@@ -93,6 +100,7 @@ export function AssetsBookings() {
                   <Rnd
                     className="bg-blue-500"
                     key={id}
+                    title={`${new Date(from).toLocaleString()}\n${new Date(to).toLocaleString()}`}
                     bounds="parent"
                     enableResizing={enableResizing}
                     size={{
@@ -115,7 +123,18 @@ export function AssetsBookings() {
                     //   };
                     // }}
                   >
-                    {new Date(from).toLocaleTimeString()}
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {new Date(from).toLocaleTimeString()}
+                      </TooltipTrigger>
+                      <TooltipPortal>
+                        <TooltipContent>
+                          {new Date(from).toLocaleString()}
+                          <br />
+                          {new Date(to).toLocaleString()}
+                        </TooltipContent>
+                      </TooltipPortal>
+                    </Tooltip>
                   </Rnd>
                 ))}
               </div>

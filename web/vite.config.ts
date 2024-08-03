@@ -24,5 +24,8 @@ export default defineConfig(({ mode }) => {
         "/trpc": proxyOptions,
       },
     },
+    preview: {
+      port: Number(env["VITE_PORT"]),
+    },
   };
 });

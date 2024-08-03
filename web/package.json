@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsr generate && tsc && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "ts": "tsc --noEmit --watch",
     "ts:check": "tsc --noEmit"
   },

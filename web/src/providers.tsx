@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { useState } from "react";
 
+import { TooltipProvider } from "./components/ui/tooltip";
 import { trpc } from "./trpc";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>{children}</TooltipProvider>
+      </QueryClientProvider>
     </trpc.Provider>
   );
 }
