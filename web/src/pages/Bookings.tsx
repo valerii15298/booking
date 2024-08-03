@@ -10,9 +10,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { getDefaultStartDate, getEndDate } from "./getDates";
-import { ReactInfiniteCircularScrollWithDates } from "./ReactInfiniteCircularScrollWithDates";
-import { trpc } from "./trpc";
+import { getDefaultStartDate, getEndDate } from "../getDates";
+import { ReactInfiniteCircularScrollWithDates } from "../ReactInfiniteCircularScrollWithDates";
+import { trpc } from "../trpc";
 
 const enableResizing: ResizeEnable = {
   top: true,
