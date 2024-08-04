@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -10,8 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { getDefaultStartDate, getEndDate } from "../getDates";
-import { ReactInfiniteCircularScrollWithDates } from "../ReactInfiniteCircularScrollWithDates";
+import { DAY_IN_MS, getDates, getDefaultStartDate } from "../getDates";
 import { trpc } from "../trpc";
 
 const enableResizing: ResizeEnable = {
@@ -25,14 +24,26 @@ const enableResizing: ResizeEnable = {
   topLeft: false,
 };
 
+const DATE_ITEM_HEIGHT = 50;
 export function AssetsBookings() {
-  const [startDate, setStartDate] = useState(getDefaultStartDate);
+  const [startDate, _setStartDate] = useState(getDefaultStartDate);
+  const [endDate, setEndDate] = useState(startDate + DAY_IN_MS);
   const assetsQuery = trpc.assets.list.useQuery();
   const [scrollHeight, setScrollHeight] = useState(0);
   const bookingsQuery = trpc.bookings.list.useQuery();
   const refs = useRef<Record<number, HTMLElement>>({});
+  const datesListRef = useRef<HTMLDivElement>(null);
 
-  const endDate = getEndDate(startDate);
+  useLayoutEffect(() => {
+    if (!datesListRef.current) return;
+    if (scrollHeight !== datesListRef.current.scrollHeight) {
+      setScrollHeight(datesListRef.current.scrollHeight);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endDate]);
+
+  const dates = getDates(startDate, endDate);
+
   if (bookingsQuery.isPending) {
     return <>Loading...</>;
   }
@@ -63,15 +74,33 @@ export function AssetsBookings() {
         ))}
       </header>
       <div className="flex overflow-hidden">
-        <ReactInfiniteCircularScrollWithDates
-          {...{ startDate, setStartDate }}
+        <div
+          ref={datesListRef}
+          className="w-fit overflow-y-auto hide-scrollbar"
           onScroll={(e) => {
-            if (!scrollHeight) setScrollHeight(e.currentTarget.scrollHeight);
+            const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+
+            if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
+              setEndDate((prev) => prev + DAY_IN_MS);
+            }
             for (const ref of Object.values(refs.current)) {
               ref.scrollTop = e.currentTarget.scrollTop;
             }
           }}
-        />
+        >
+          {dates.map((item, i) => (
+            <div
+              className="border bg-black text-white"
+              style={{
+                height: DATE_ITEM_HEIGHT,
+                backgroundColor: i % 2 ? "gray" : undefined,
+              }}
+              key={item}
+            >
+              {new Date(item).toLocaleString()}
+            </div>
+          ))}
+        </div>
         {assetsQuery.data.map((asset) => {
           const assetBookings = bookingsQuery.data
             .filter((b) => b.assetId === asset.id)
