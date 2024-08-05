@@ -31,7 +31,6 @@ export function AssetsBookings() {
   const assetsQuery = trpc.assets.list.useQuery();
   const [scrollHeight, setScrollHeight] = useState(0);
   const bookingsQuery = trpc.bookings.list.useQuery();
-  const refs = useRef<Record<number, HTMLElement>>({});
   const datesListRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -76,54 +75,38 @@ export function AssetsBookings() {
       <div className="flex overflow-hidden">
         <div
           ref={datesListRef}
-          className="w-fit overflow-y-auto hide-scrollbar"
+          className="flex w-fit overflow-y-auto hide-scrollbar"
           onScroll={(e) => {
             const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
             if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
               setEndDate((prev) => prev + DAY_IN_MS);
             }
-            for (const ref of Object.values(refs.current)) {
-              ref.scrollTop = e.currentTarget.scrollTop;
-            }
           }}
         >
-          {dates.map((item, i) => (
-            <div
-              className="border bg-black text-white"
-              style={{
-                height: DATE_ITEM_HEIGHT,
-                backgroundColor: i % 2 ? "gray" : undefined,
-              }}
-              key={item}
-            >
-              {new Date(item).toLocaleString()}
-            </div>
-          ))}
-        </div>
-        {assetsQuery.data.map((asset) => {
-          const assetBookings = bookingsQuery.data
-            .filter((b) => b.assetId === asset.id)
-            .filter((b) => b.from >= startDate && b.to <= endDate);
-          return (
-            <section
-              key={asset.id}
-              ref={(e) => {
-                if (e) {
-                  refs.current[asset.id] = e;
-                } else {
-                  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-                  delete refs.current[asset.id];
-                }
-              }}
-              className="relative w-32 overflow-y-hidden"
-            >
+          <div>
+            {dates.map((item, i) => (
               <div
+                className="border bg-black text-white"
                 style={{
-                  minHeight: scrollHeight,
-                  maxHeight: scrollHeight,
-                  height: scrollHeight,
+                  height: DATE_ITEM_HEIGHT,
+                  backgroundColor: i % 2 ? "gray" : undefined,
                 }}
+                key={item}
+              >
+                {new Date(item).toLocaleString()}
+              </div>
+            ))}
+          </div>
+          {assetsQuery.data.map((asset) => {
+            const assetBookings = bookingsQuery.data
+              .filter((b) => b.assetId === asset.id)
+              .filter((b) => b.from >= startDate && b.to <= endDate);
+            return (
+              <section
+                key={asset.id}
+                style={{ height: scrollHeight }}
+                className="relative w-32"
               >
                 {assetBookings.map(({ from, to, id }) => (
                   <Rnd
@@ -166,10 +149,10 @@ export function AssetsBookings() {
                     </Tooltip>
                   </Rnd>
                 ))}
-              </div>
-            </section>
-          );
-        })}
+              </section>
+            );
+          })}
+        </div>
       </div>
     </main>
   );
