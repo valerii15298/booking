@@ -41,7 +41,7 @@ export function AssetsBookings() {
       setScrollHeight(datesListRef.current.scrollHeight);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endDate]);
+  }, [endDate, dateItemHeight]);
 
   const dates = getDates(startDate, endDate);
 
