@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form, FormField } from "@/components/ui/form";
+import { trpc } from "@/trpc";
 import { type Types, zod } from "@/zod";
 
 function formatDate(date: Date) {
@@ -31,6 +32,7 @@ function formatDateTime(date: Date) {
   return `${dateStr}T${hours}:${minutes}` as const;
 }
 export function CreateBooking({ id, name }: Types.Asset) {
+  const createBooking = trpc.bookings.create.useMutation();
   const form = useForm({
     defaultValues: {
       from: new Date(),
@@ -57,9 +59,10 @@ export function CreateBooking({ id, name }: Types.Asset) {
           <form
             id={formId}
             onSubmit={(e) => {
-              void form.handleSubmit((_data, e) => {
+              void form.handleSubmit((data, e) => {
                 e?.preventDefault();
-                // console.log(data);
+                // eslint-disable-next-line no-console
+                void createBooking.mutateAsync(data).then(console.log);
               })(e);
             }}
             className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between"
