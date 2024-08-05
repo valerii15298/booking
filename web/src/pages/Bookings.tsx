@@ -17,6 +17,7 @@ import {
 
 import { DAY_IN_MS, getDates, getDefaultStartDate } from "../getDates";
 import { trpc } from "../trpc";
+import { CreateBooking } from "./CreateBooking";
 
 const enableResizing: ResizeEnable = {
   top: true,
@@ -90,7 +91,7 @@ export function AssetsBookings() {
           <Fragment key={a.id}>
             <ResizableHandle />
             <ResizablePanel>
-              <Button className="w-full rounded-none">{a.name}</Button>
+              <CreateBooking {...a} />
             </ResizablePanel>
           </Fragment>
         ))}
