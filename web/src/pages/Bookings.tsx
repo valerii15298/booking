@@ -84,9 +84,9 @@ export function AssetsBookings() {
             }
           }}
         >
-          <div>
+          <ul>
             {dates.map((item, i) => (
-              <div
+              <li
                 className="border bg-black text-white"
                 style={{
                   height: DATE_ITEM_HEIGHT,
@@ -95,9 +95,9 @@ export function AssetsBookings() {
                 key={item}
               >
                 {new Date(item).toLocaleString()}
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
           {assetsQuery.data.map((asset) => {
             const assetBookings = bookingsQuery.data
               .filter((b) => b.assetId === asset.id)
