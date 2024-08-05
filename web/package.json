@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@tanstack/router-cli": "^1.45.13",
-    "@tanstack/router-devtools": "^1.46.4",
+    "@tanstack/router-devtools": "^1.46.5",
     "@tanstack/router-vite-plugin": "^1.45.13",
     "@tsconfig/vite-react": "^3.0.2",
     "@types/react": "^18.3.3",
