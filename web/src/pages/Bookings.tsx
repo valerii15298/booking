@@ -1,7 +1,8 @@
-import { Fragment, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useLayoutEffect, useRef } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
+import { useApp } from "@/appContext/useApp";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
@@ -15,8 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { DAY_IN_MS, getDates, getDefaultStartDate } from "../getDates";
-import { trpc } from "../trpc";
+import { DAY_IN_MS, getDates } from "../getDates";
 import { CreateBooking } from "./CreateBooking";
 
 const enableResizing: ResizeEnable = {
@@ -31,19 +31,24 @@ const enableResizing: ResizeEnable = {
 };
 
 export function AssetsBookings() {
-  const [dateItemHeight, _setDateItemHeight] = useState(50);
-  const [scrollHeight, setScrollHeight] = useState(0);
-  const [[datesColumnSize, ...columnsSizes], setColumnsSizes] = useState<
-    number[]
-  >([]);
+  const {
+    assets,
+    bookings,
+    startDate,
+    setStartDate: _setStartDate,
+    endDate,
+    setEndDate,
+    columnsSizes: [datesColumnSize, ...columnsSizes],
+    setColumnsSizes,
+    dateItemHeight,
+    setDateItemHeight: _setDateItemHeight,
+    scrollHeight,
+    setScrollHeight,
+    dateToY,
+  } = useApp();
 
-  const [startDate, _setStartDate] = useState(getDefaultStartDate);
-  const [endDate, setEndDate] = useState(startDate + DAY_IN_MS);
+  const dates = getDates(startDate, endDate);
   const datesListRef = useRef<HTMLDivElement>(null);
-
-  const assetsQuery = trpc.assets.list.useQuery();
-  const bookingsQuery = trpc.bookings.list.useQuery();
-
   useLayoutEffect(() => {
     if (!datesListRef.current) return;
     if (scrollHeight !== datesListRef.current.scrollHeight) {
@@ -52,28 +57,9 @@ export function AssetsBookings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDate, dateItemHeight]);
 
-  const dates = getDates(startDate, endDate);
-
-  if (bookingsQuery.isPending) {
-    return <>Loading...</>;
-  }
-  if (bookingsQuery.isError) {
-    return <>{bookingsQuery.error.message}</>;
-  }
-  if (assetsQuery.isPending) {
-    return <>Loading...</>;
-  }
-  if (assetsQuery.isError) {
-    return <>{assetsQuery.error.message}</>;
-  }
-
   // startDate -> 0 (pixels)
   // endDate -> scrollHeight (pixels)
   // x -> (x - startDate) * scrollHeight / (endDate - startDate) (pixels)
-
-  function dateToY(ts: number) {
-    return ((ts - startDate) * scrollHeight) / (endDate - startDate);
-  }
 
   return (
     <main className="flex h-full flex-col">
@@ -87,7 +73,7 @@ export function AssetsBookings() {
         <ResizablePanel>
           <Button className="w-full rounded-none">Settings</Button>
         </ResizablePanel>
-        {assetsQuery.data.map((a) => (
+        {assets.map((a) => (
           <Fragment key={a.id}>
             <ResizableHandle />
             <ResizablePanel>
@@ -122,8 +108,8 @@ export function AssetsBookings() {
               </li>
             ))}
           </ul>
-          {assetsQuery.data.map((asset, i) => {
-            const assetBookings = bookingsQuery.data
+          {assets.map((asset, i) => {
+            const assetBookings = bookings
               .filter((b) => b.assetId === asset.id)
               .filter((b) => b.from >= startDate && b.to <= endDate);
             return (
