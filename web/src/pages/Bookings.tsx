@@ -1,8 +1,13 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
 import { Button } from "@/components/ui/button";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import {
   Tooltip,
   TooltipContent,
@@ -27,6 +32,9 @@ const enableResizing: ResizeEnable = {
 export function AssetsBookings() {
   const [dateItemHeight, _setDateItemHeight] = useState(50);
   const [scrollHeight, setScrollHeight] = useState(0);
+  const [[datesColumnSize, ...columnsSizes], setColumnsSizes] = useState<
+    number[]
+  >([]);
 
   const [startDate, _setStartDate] = useState(getDefaultStartDate);
   const [endDate, setEndDate] = useState(startDate + DAY_IN_MS);
@@ -68,16 +76,29 @@ export function AssetsBookings() {
 
   return (
     <main className="flex h-full flex-col">
-      <header>
-        <Button>Settings</Button>
+      <ResizablePanelGroup
+        tagName="header"
+        direction="horizontal"
+        className="flex-shrink-0"
+        style={{ height: "unset" }}
+        onLayout={setColumnsSizes}
+      >
+        <ResizablePanel>
+          <Button className="w-full rounded-none">Settings</Button>
+        </ResizablePanel>
         {assetsQuery.data.map((a) => (
-          <Button key={a.id}>{a.name}</Button>
+          <Fragment key={a.id}>
+            <ResizableHandle />
+            <ResizablePanel>
+              <Button className="w-full rounded-none">{a.name}</Button>
+            </ResizablePanel>
+          </Fragment>
         ))}
-      </header>
-      <div className="flex overflow-hidden">
+      </ResizablePanelGroup>
+      <div className="flex w-full overflow-hidden">
         <div
           ref={datesListRef}
-          className="flex w-fit overflow-y-auto hide-scrollbar"
+          className="flex w-full overflow-y-auto hide-scrollbar"
           onScroll={(e) => {
             const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
@@ -86,7 +107,7 @@ export function AssetsBookings() {
             }
           }}
         >
-          <ul>
+          <ul style={{ width: `${datesColumnSize}%` }}>
             {dates.map((item, i) => (
               <li
                 className="border bg-black text-white"
@@ -100,14 +121,17 @@ export function AssetsBookings() {
               </li>
             ))}
           </ul>
-          {assetsQuery.data.map((asset) => {
+          {assetsQuery.data.map((asset, i) => {
             const assetBookings = bookingsQuery.data
               .filter((b) => b.assetId === asset.id)
               .filter((b) => b.from >= startDate && b.to <= endDate);
             return (
               <section
                 key={asset.id}
-                style={{ height: scrollHeight }}
+                style={{
+                  height: scrollHeight,
+                  width: `${columnsSizes[i]}%`,
+                }}
                 className="relative w-32"
               >
                 {assetBookings.map(({ from, to, id }) => (
