@@ -26,12 +26,14 @@ const enableResizing: ResizeEnable = {
 
 export function AssetsBookings() {
   const [dateItemHeight, _setDateItemHeight] = useState(50);
+  const [scrollHeight, setScrollHeight] = useState(0);
+
   const [startDate, _setStartDate] = useState(getDefaultStartDate);
   const [endDate, setEndDate] = useState(startDate + DAY_IN_MS);
-  const assetsQuery = trpc.assets.list.useQuery();
-  const [scrollHeight, setScrollHeight] = useState(0);
-  const bookingsQuery = trpc.bookings.list.useQuery();
   const datesListRef = useRef<HTMLDivElement>(null);
+
+  const assetsQuery = trpc.assets.list.useQuery();
+  const bookingsQuery = trpc.bookings.list.useQuery();
 
   useLayoutEffect(() => {
     if (!datesListRef.current) return;
