@@ -1,4 +1,4 @@
-import { Fragment, useLayoutEffect, useRef } from "react";
+import { Fragment } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -43,23 +43,12 @@ export function AssetsBookings() {
     dateItemHeight,
     setDateItemHeight: _setDateItemHeight,
     scrollHeight,
-    setScrollHeight,
+    setScrollHeight: _setScrollHeight,
+    scrollableContainerRef,
     dateToY,
   } = useApp();
 
   const dates = getDates(startDate, endDate);
-  const datesListRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (!datesListRef.current) return;
-    if (scrollHeight !== datesListRef.current.scrollHeight) {
-      setScrollHeight(datesListRef.current.scrollHeight);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endDate, dateItemHeight]);
-
-  // startDate -> 0 (pixels)
-  // endDate -> scrollHeight (pixels)
-  // x -> (x - startDate) * scrollHeight / (endDate - startDate) (pixels)
 
   return (
     <main className="flex h-full flex-col">
@@ -84,7 +73,7 @@ export function AssetsBookings() {
       </ResizablePanelGroup>
       <div className="flex w-full overflow-hidden">
         <div
-          ref={datesListRef}
+          ref={scrollableContainerRef}
           className="flex w-full overflow-y-auto hide-scrollbar"
           onScroll={(e) => {
             const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;

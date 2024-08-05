@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { DAY_IN_MS, getDefaultStartDate } from "@/getDates";
 import { trpc } from "@/trpc";
@@ -15,6 +15,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const assetsQuery = trpc.assets.list.useQuery();
   const bookingsQuery = trpc.bookings.list.useQuery();
+
+  const scrollableContainerRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (!scrollableContainerRef.current) return;
+    if (scrollHeight !== scrollableContainerRef.current.scrollHeight) {
+      setScrollHeight(scrollableContainerRef.current.scrollHeight);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endDate, dateItemHeight]);
 
   function dateToY(ts: number) {
     // startDate -> 0 (pixels)
@@ -50,6 +59,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         scrollHeight,
         setScrollHeight,
         dateToY,
+        scrollableContainerRef,
         assets: assetsQuery.data,
         bookings: bookingsQuery.data,
       }}
