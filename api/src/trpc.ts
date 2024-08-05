@@ -1,10 +1,13 @@
 import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 
 import type { Context } from "./context.js";
 import { d, s } from "./db.js";
 import { zInt, zod } from "./zod.js";
 
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context>().create({
+  transformer: superjson,
+});
 
 export const appRouter = t.router({
   assets: {

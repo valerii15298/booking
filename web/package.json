@@ -29,6 +29,7 @@
     "react-hook-form": "^7.52.2",
     "react-resizable-panels": "^2.0.22",
     "react-rnd": "10.4.12",
+    "superjson": "^2.2.1",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
