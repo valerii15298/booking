@@ -24,8 +24,8 @@ const enableResizing: ResizeEnable = {
   topLeft: false,
 };
 
-const DATE_ITEM_HEIGHT = 50;
 export function AssetsBookings() {
+  const [dateItemHeight, _setDateItemHeight] = useState(50);
   const [startDate, _setStartDate] = useState(getDefaultStartDate);
   const [endDate, setEndDate] = useState(startDate + DAY_IN_MS);
   const assetsQuery = trpc.assets.list.useQuery();
@@ -89,7 +89,7 @@ export function AssetsBookings() {
               <li
                 className="border bg-black text-white"
                 style={{
-                  height: DATE_ITEM_HEIGHT,
+                  height: dateItemHeight,
                   backgroundColor: i % 2 ? "gray" : undefined,
                 }}
                 key={item}
