@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { useApp } from "@/appContext/useApp";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,7 +33,17 @@ function formatDateTime(date: Date) {
   return `${dateStr}T${hours}:${minutes}` as const;
 }
 export function CreateBooking({ id, name }: Types.Asset) {
-  const createBooking = trpc.bookings.create.useMutation();
+  const [open, setOpen] = useState(false);
+  const { scrollToDate } = useApp();
+  const utils = trpc.useUtils();
+  const createBooking = trpc.bookings.create.useMutation({
+    onSuccess(_, { from }) {
+      setOpen(false);
+      void utils.bookings.invalidate().then(() => {
+        scrollToDate(from.getTime());
+      });
+    },
+  });
   const form = useForm({
     defaultValues: {
       from: new Date(),
@@ -44,7 +55,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
 
   const formId = useId();
   return (
-    <Dialog key={id}>
+    <Dialog open={open} onOpenChange={setOpen} key={id}>
       <DialogTrigger asChild>
         <Button className="w-full rounded-none">{name}</Button>
       </DialogTrigger>
@@ -61,8 +72,8 @@ export function CreateBooking({ id, name }: Types.Asset) {
             onSubmit={(e) => {
               void form.handleSubmit((data, e) => {
                 e?.preventDefault();
-                // eslint-disable-next-line no-console
-                void createBooking.mutateAsync(data).then(console.log);
+
+                void createBooking.mutateAsync(data);
               })(e);
             }}
             className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between"

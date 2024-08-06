@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { DAY_IN_MS, getDates } from "../getDates";
+import { DAY_IN_MS } from "../getDates";
 import { CreateBooking } from "./CreateBooking";
 
 const enableResizing: ResizeEnable = {
@@ -38,17 +38,15 @@ export function AssetsBookings() {
     setStartDate: _setStartDate,
     endDate,
     setEndDate,
+    dates,
     columnsSizes: [datesColumnSize, ...columnsSizes],
     setColumnsSizes,
     dateItemHeight,
     setDateItemHeight: _setDateItemHeight,
-    scrollHeight,
-    setScrollHeight: _setScrollHeight,
+    scrollableContainerHeight,
     scrollableContainerRef,
     dateToY,
   } = useApp();
-
-  const dates = getDates(startDate, endDate);
 
   return (
     <main className="flex h-full flex-col">
@@ -105,7 +103,7 @@ export function AssetsBookings() {
               <section
                 key={asset.id}
                 style={{
-                  height: scrollHeight,
+                  height: scrollableContainerHeight,
                   width: `${columnsSizes[i]}%`,
                 }}
                 className="relative w-32"
