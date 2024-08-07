@@ -34,14 +34,11 @@ function formatDateTime(date: Date) {
 }
 export function CreateBooking({ id, name }: Types.Asset) {
   const [open, setOpen] = useState(false);
-  const { scrollToDate } = useApp();
+  const { scroll, scrollPositionMs } = useApp();
   const utils = trpc.useUtils();
   const createBooking = trpc.bookings.create.useMutation({
-    onSuccess(_, { from }) {
-      setOpen(false);
-      void utils.bookings.invalidate().then(() => {
-        scrollToDate(from.getTime());
-      });
+    onSuccess() {
+      void utils.bookings.invalidate();
     },
   });
   const form = useForm({
@@ -71,7 +68,16 @@ export function CreateBooking({ id, name }: Types.Asset) {
             id={formId}
             onSubmit={(e) => {
               void form.handleSubmit((data, e) => {
+                setOpen(false);
                 e?.preventDefault();
+                const currentScrollMs = scrollPositionMs();
+
+                // TODO go back to current position in case of an error and setOpen back to true(test with disabled network)
+                scroll({
+                  toDate: data.from.getTime(),
+                  fromDate: currentScrollMs,
+                  behavior: "smooth",
+                });
 
                 void createBooking.mutateAsync(data);
               })(e);
