@@ -1,7 +1,13 @@
 html,
 body {
   height: 100%;
-  overscroll-behavior-y: none;
+}
+
+@media screen and (max-width: 500px) {
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
 }
 
 * {
