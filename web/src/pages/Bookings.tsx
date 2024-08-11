@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -47,6 +47,16 @@ export function AssetsBookings() {
     dateToY,
     preloadDateInterval,
   } = useApp();
+
+  useEffect(() => {
+    // TODO refactor to use tanstack router
+    if (scrollableContainerRef.current) {
+      scrollableContainerRef.current.scrollTo({
+        top: dateToY(Date.now()),
+        behavior: "instant",
+      });
+    }
+  }, []);
 
   return (
     <main className="flex h-full flex-col">

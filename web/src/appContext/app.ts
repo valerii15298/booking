@@ -4,10 +4,11 @@ import { createContext } from "react";
 import type { AppRouter } from "@/trpc";
 
 import type { UseState } from "../lib/types";
+import type { Interval } from "./AppProvider";
 
 export type AppContext = UseState<number, "dateItemHeight"> &
   UseState<number[], "columnsSizes"> &
-  UseState<number, "dateDelimiter"> &
+  UseState<Interval, "dateDelimiter"> &
   UseState<number, "preloadDateInterval"> &
   UseState<number, "startDate"> &
   UseState<number, "endDate"> & {
