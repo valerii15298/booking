@@ -3,11 +3,18 @@ CREATE TABLE IF NOT EXISTS "assets" (
 	"name" varchar NOT NULL
 );
 --> statement-breakpoint
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bookings" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "bookings_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"from" timestamp NOT NULL,
 	"to" timestamp NOT NULL,
-	"assetId" integer NOT NULL
+	"assetId" integer NOT NULL,
+	check ("from" < "to"),
+	constraint overlapping_bookings exclude using gist (
+		"assetId" with =,
+		tsrange("from", "to") with &&
+	)
 );
 --> statement-breakpoint
 DO $$ BEGIN
