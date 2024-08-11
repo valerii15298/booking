@@ -77,6 +77,7 @@ export function AssetsBookings() {
             const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
             if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
+              // TODO maybe we do not need lazy loading and can you buttons to load next and previous
               setEndDate((prev) => prev + preloadDateInterval);
             }
           }}
