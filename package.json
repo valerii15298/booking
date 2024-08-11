@@ -8,6 +8,7 @@
     "ts:check": "pnpm --no-bail -r ts:check",
     "db:push": "pnpm -C api exec drizzle-kit push",
     "db:studio": "pnpm -C api exec drizzle-kit studio",
+    "db:migrate": "pnpm -C api exec drizzle-kit migrate",
     "compose": "BUILDKIT_PROGRESS=plain docker compose up --build",
     "prepare": "husky",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0",
