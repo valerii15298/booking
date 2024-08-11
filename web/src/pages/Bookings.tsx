@@ -56,6 +56,7 @@ export function AssetsBookings() {
         behavior: "instant",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
