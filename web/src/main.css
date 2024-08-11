@@ -1,15 +1,10 @@
 html,
 body {
   height: 100%;
-}
-
-@media screen and (max-width: 500px) {
-  html,
-  body {
-    overscroll-behavior-y: none;
-  }
+  overscroll-behavior-y: none;
 }
 
 * {
   box-sizing: border-box;
+  overscroll-behavior-y: none;
 }

@@ -1,10 +1,9 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
 import { useApp } from "@/appContext/useApp";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -17,7 +16,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { DAY_IN_MS } from "../getDates";
 import { CreateBooking } from "./CreateBooking";
 
 const enableResizing: ResizeEnable = {
@@ -47,99 +45,50 @@ export function AssetsBookings() {
     scrollableContainerHeight,
     scrollableContainerRef,
     dateToY,
+    preloadDateInterval,
   } = useApp();
 
-  // Preload top
-  const [overscrollHeight, setOverscrollHeight] = useState(0);
-  const progressValue = Math.min(overscrollHeight * 3, 100);
-  const visibleLoadPrevious = progressValue >= 100;
-  const initialYRef = useRef(0);
-  useEffect(() => {
-    if (visibleLoadPrevious) {
-      return;
-    }
-    function handleWheel(e: WheelEvent) {
-      if (scrollableContainerRef.current?.scrollTop !== 0 || e.deltaY > 0) {
-        return;
-      }
-      if (!initialYRef.current) {
-        initialYRef.current = e.y;
-      }
-      const diff = Math.abs(e.y - initialYRef.current);
-      setOverscrollHeight(diff);
-    }
-    function handleMouse() {
-      initialYRef.current = 0;
-    }
-    window.addEventListener("mousemove", handleMouse);
-    window.addEventListener("wheel", handleWheel);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("mousemove", handleMouse);
-    };
-  }, [visibleLoadPrevious, scrollableContainerRef]);
-  // End preload top
-
   return (
-    <>
-      <div
-        style={{
-          height: overscrollHeight + 2,
-          zIndex: visibleLoadPrevious ? 1 : -1,
-        }}
-        className="fixed top-0 flex w-full items-center justify-center"
+    <main className="flex h-full flex-col">
+      <ResizablePanelGroup
+        tagName="header"
+        direction="horizontal"
+        className="flex-shrink-0"
+        style={{ height: "unset" }}
+        onLayout={setColumnsSizes}
       >
-        <Progress
-          value={progressValue}
-          className="absolute h-full rounded-none"
-        />
-        {visibleLoadPrevious && (
-          <Button variant={"outline"} className="z-10 h-7 p-1">
-            Load Previous Month
-          </Button>
-        )}
-      </div>
-      <main
-        style={{
-          ...(visibleLoadPrevious && {
-            position: "fixed",
-            top: overscrollHeight + 2,
-          }),
-        }}
-        className="flex h-full w-full flex-col"
-      >
-        <ResizablePanelGroup
-          tagName="header"
-          direction="horizontal"
-          className="flex-shrink-0"
-          style={{ height: "unset" }}
-          onLayout={setColumnsSizes}
-        >
-          <ResizablePanel>
-            <Button className="w-full rounded-none">Settings</Button>
-          </ResizablePanel>
-          {assets.map((a) => (
-            <Fragment key={a.id}>
-              <ResizableHandle />
-              <ResizablePanel>
-                <CreateBooking {...a} />
-              </ResizablePanel>
-            </Fragment>
-          ))}
-        </ResizablePanelGroup>
-        <div className="flex w-full overflow-hidden">
-          <div
-            ref={scrollableContainerRef}
-            className="flex w-full overflow-y-auto hide-scrollbar"
-            onScroll={(e) => {
-              const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        <ResizablePanel>
+          <Button className="w-full rounded-none">Settings</Button>
+        </ResizablePanel>
+        {assets.map((a) => (
+          <Fragment key={a.id}>
+            <ResizableHandle />
+            <ResizablePanel>
+              <CreateBooking {...a} />
+            </ResizablePanel>
+          </Fragment>
+        ))}
+      </ResizablePanelGroup>
+      <div className="flex overflow-hidden">
+        <div
+          ref={scrollableContainerRef}
+          className="w-full overflow-y-auto hide-scrollbar"
+          onScroll={(e) => {
+            const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
-              if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
-                setEndDate((prev) => prev + DAY_IN_MS);
-              }
-            }}
-          >
+            if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
+              setEndDate((prev) => prev + preloadDateInterval);
+            }
+          }}
+        >
+          <div className="relative flex h-fit">
+            <Button
+              variant={"outline"}
+              className="absolute left-[50%] top-1.5 z-10 translate-x-[-50%]"
+            >
+              Load Previous
+            </Button>
+
             <ul style={{ width: `${datesColumnSize}%` }}>
               {dates.map((item, i) => (
                 <li
@@ -211,9 +160,15 @@ export function AssetsBookings() {
                 </section>
               );
             })}
+            <Button
+              variant={"outline"}
+              className="absolute bottom-1.5 left-[50%] z-10 translate-x-[-50%]"
+            >
+              Load Next
+            </Button>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
