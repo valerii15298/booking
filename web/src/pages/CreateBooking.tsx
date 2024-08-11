@@ -54,7 +54,9 @@ export function CreateBooking({ id, name }: Types.Asset) {
   return (
     <Dialog open={open} onOpenChange={setOpen} key={id}>
       <DialogTrigger asChild>
-        <Button className="w-full rounded-none">{name}</Button>
+        <Button className="sticky top-0 z-10 w-full rounded-none">
+          {name}
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-fit max-w-full overflow-x-auto">
         <DialogHeader>

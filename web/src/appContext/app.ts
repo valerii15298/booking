@@ -7,7 +7,6 @@ import type { UseState } from "../lib/types";
 import type { Interval } from "./AppProvider";
 
 export type AppContext = UseState<number, "dateItemHeight"> &
-  UseState<number[], "columnsSizes"> &
   UseState<Interval, "dateDelimiter"> &
   UseState<number, "preloadDateInterval"> &
   UseState<number, "startDate"> &
@@ -23,6 +22,6 @@ export type AppContext = UseState<number, "dateItemHeight"> &
     dateToY: (ts: number, params?: Partial<AppContext>) => number;
     dates: number[];
     scrollableContainerHeight: number;
-    scrollableContainerRef: React.RefObject<HTMLDivElement>;
+    scrollableContainerRef: React.RefObject<HTMLElement>;
   };
 export const appContext = createContext<AppContext | null>(null);

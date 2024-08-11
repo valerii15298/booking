@@ -38,8 +38,6 @@ export function AssetsBookings() {
     endDate,
     setEndDate,
     dates,
-    columnsSizes: [datesColumnSize, ...columnsSizes],
-    setColumnsSizes,
     dateItemHeight,
     setDateItemHeight: _setDateItemHeight,
     scrollableContainerHeight,
@@ -60,48 +58,36 @@ export function AssetsBookings() {
   }, []);
 
   return (
-    <main className="flex h-full flex-col">
-      <ResizablePanelGroup
-        tagName="header"
-        direction="horizontal"
-        className="flex-shrink-0"
-        style={{ height: "unset" }}
-        onLayout={setColumnsSizes}
-      >
-        <ResizablePanel>
-          <Button className="w-full rounded-none">Settings</Button>
-        </ResizablePanel>
-        {assets.map((a) => (
-          <Fragment key={a.id}>
-            <ResizableHandle />
-            <ResizablePanel>
-              <CreateBooking {...a} />
-            </ResizablePanel>
-          </Fragment>
-        ))}
-      </ResizablePanelGroup>
-      <div className="flex overflow-hidden">
-        <div
-          ref={scrollableContainerRef}
-          className="w-full overflow-y-auto hide-scrollbar"
-          onScroll={(e) => {
-            const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    <main
+      ref={scrollableContainerRef}
+      className="h-full overflow-y-auto hide-scrollbar"
+      onScroll={(e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
-            if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
-              // TODO maybe we do not need lazy loading and can you buttons to load next and previous
-              setEndDate((prev) => prev + preloadDateInterval);
-            }
-          }}
+        if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
+          // TODO maybe we do not need lazy loading and can you buttons to load next and previous
+          setEndDate((prev) => prev + preloadDateInterval);
+        }
+      }}
+    >
+      <div className="relative">
+        <Button
+          variant={"outline"}
+          className="absolute left-[50%] top-2 z-20 translate-x-[-50%]"
         >
-          <div className="relative flex h-fit">
-            <Button
-              variant={"outline"}
-              className="absolute left-[50%] top-1.5 z-10 translate-x-[-50%]"
-            >
-              Load Previous
+          Load Previous
+        </Button>
+        <ResizablePanelGroup
+          tagName="header"
+          direction="horizontal"
+          style={{ overflow: "visible" }}
+        >
+          <ResizablePanel style={{ overflow: "visible" }}>
+            <Button className="sticky top-0 w-full rounded-none">
+              Settings
             </Button>
 
-            <ul style={{ width: `${datesColumnSize}%` }}>
+            <ul>
               {dates.map((item, i) => (
                 <li
                   className="border bg-black text-white"
@@ -115,71 +101,76 @@ export function AssetsBookings() {
                 </li>
               ))}
             </ul>
-            {assets.map((asset, i) => {
-              const assetBookings = bookings
-                .filter((b) => b.assetId === asset.id)
-                .filter((b) => b.from >= startDate && b.to <= endDate);
-              return (
-                <section
-                  key={asset.id}
-                  style={{
-                    height: scrollableContainerHeight,
-                    width: `${columnsSizes[i]}%`,
-                  }}
-                  className="relative w-32"
-                >
-                  {assetBookings.map(({ from, to, id }) => (
-                    <Rnd
-                      className="bg-blue-500"
-                      key={id}
-                      title={`${new Date(from).toLocaleString()}\n${new Date(to).toLocaleString()}`}
-                      bounds="parent"
-                      enableResizing={enableResizing}
-                      size={{
-                        width: "100%",
-                        height: dateToY(to) - dateToY(from),
-                      }}
-                      position={{
-                        x: 0,
-                        y: dateToY(from),
-                      }}
-                      // onDragStop={(_e, d) => {
-                      //   const _ = d.y;
-                      // }}
+          </ResizablePanel>
+          {assets.map((a) => {
+            const assetBookings = bookings
+              .filter((b) => b.assetId === a.id)
+              .filter((b) => b.from >= startDate && b.to <= endDate);
+            return (
+              <Fragment key={a.id}>
+                <ResizableHandle />
+                <ResizablePanel style={{ overflow: "visible" }}>
+                  <CreateBooking {...a} />
+                  <section
+                    key={a.id}
+                    style={{
+                      height: scrollableContainerHeight,
+                    }}
+                    className="relative"
+                  >
+                    {assetBookings.map(({ from, to, id }) => (
+                      <Rnd
+                        className="bg-blue-500"
+                        key={id}
+                        title={`${new Date(from).toLocaleString()}\n${new Date(to).toLocaleString()}`}
+                        bounds="parent"
+                        enableResizing={enableResizing}
+                        size={{
+                          width: "100%",
+                          height: dateToY(to) - dateToY(from),
+                        }}
+                        position={{
+                          x: 0,
+                          y: dateToY(from),
+                        }}
+                        // onDragStop={(_e, d) => {
+                        //   const _ = d.y;
+                        // }}
 
-                      // onResizeStop={(_e, _direction, ref, _delta, position) => {
-                      //   const _ = {
-                      //     width: "100%",
-                      //     height: ref.style.height,
-                      //     ...position,
-                      //   };
-                      // }}
-                    >
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {new Date(from).toLocaleTimeString()}
-                        </TooltipTrigger>
-                        <TooltipPortal>
-                          <TooltipContent>
-                            {new Date(from).toLocaleString()}
-                            <br />
-                            {new Date(to).toLocaleString()}
-                          </TooltipContent>
-                        </TooltipPortal>
-                      </Tooltip>
-                    </Rnd>
-                  ))}
-                </section>
-              );
-            })}
-            <Button
-              variant={"outline"}
-              className="absolute bottom-1.5 left-[50%] z-10 translate-x-[-50%]"
-            >
-              Load Next
-            </Button>
-          </div>
-        </div>
+                        // onResizeStop={(_e, _direction, ref, _delta, position) => {
+                        //   const _ = {
+                        //     width: "100%",
+                        //     height: ref.style.height,
+                        //     ...position,
+                        //   };
+                        // }}
+                      >
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {new Date(from).toLocaleTimeString()}
+                          </TooltipTrigger>
+                          <TooltipPortal>
+                            <TooltipContent>
+                              {new Date(from).toLocaleString()}
+                              <br />
+                              {new Date(to).toLocaleString()}
+                            </TooltipContent>
+                          </TooltipPortal>
+                        </Tooltip>
+                      </Rnd>
+                    ))}
+                  </section>
+                </ResizablePanel>
+              </Fragment>
+            );
+          })}
+        </ResizablePanelGroup>
+        <Button
+          variant={"outline"}
+          className="absolute bottom-2 left-[50%] z-20 translate-x-[-50%]"
+        >
+          Load Next
+        </Button>
       </div>
     </main>
   );

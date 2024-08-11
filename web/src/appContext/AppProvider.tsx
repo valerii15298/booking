@@ -32,8 +32,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const assetsQuery = trpc.assets.list.useQuery();
   const bookingsQuery = trpc.bookings.list.useQuery();
 
-  const [columnsSizes, setColumnsSizes] = useState<number[]>([]);
-
   const [maxItemsCount, _setMaxItemsCount] = useState(100);
 
   const [dateItemHeight, setDateItemHeight] = useState(50);
@@ -151,8 +149,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         dateDelimiter,
         setDateDelimiter,
         dates,
-        columnsSizes,
-        setColumnsSizes,
         dateItemHeight,
         setDateItemHeight,
         dateToY,
