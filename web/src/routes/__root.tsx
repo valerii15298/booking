@@ -12,11 +12,9 @@ const TanStackRouterDevtools = import.meta.env.VITE_TAN_STACK_DEV_TOOLS
   : () => null;
 export const Route = createRootRoute({
   component: () => (
-    <>
+    <Suspense>
       <Outlet />
-      <Suspense>
-        <TanStackRouterDevtools position="top-right" />
-      </Suspense>
-    </>
+      <TanStackRouterDevtools position="top-right" />
+    </Suspense>
   ),
 });

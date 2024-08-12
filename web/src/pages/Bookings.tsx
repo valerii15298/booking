@@ -15,6 +15,7 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { trpc } from "@/trpc";
 
 import { CreateBooking } from "./CreateBooking";
 
@@ -30,14 +31,11 @@ const enableResizing: ResizeEnable = {
 };
 
 export function AssetsBookings() {
-  const {
-    assets,
-    bookings,
-    dates,
-    dateItemHeight,
-    scrollableContainerRef,
-    dateToY,
-  } = useApp();
+  const [assets] = trpc.assets.list.useSuspenseQuery();
+
+  const { data: bookings = [] } = trpc.bookings.list.useQuery();
+
+  const { dates, dateItemHeight, scrollableContainerRef, dateToY } = useApp();
 
   useEffect(() => {
     // TODO refactor to use tanstack router

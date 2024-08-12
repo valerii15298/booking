@@ -5,7 +5,7 @@ import { z } from "zod";
 import { type AppContext, appContext } from "@/appContext/app";
 import { Interval, intervalSchema } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
-import { trpc } from "@/trpc";
+import { trpcUtils } from "@/trpc";
 
 const validateSearch = z.object({
   maxItemsCount: z.number().catch(100),
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/")({
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   component: Index,
   validateSearch,
+  loader: async () => trpcUtils.assets.list.ensureData(),
 });
 
 function roundDate(ts: number, interval: Interval) {
@@ -36,9 +37,6 @@ function getDates(startDate: number, endDate: number, dateDelimiter: number) {
 }
 
 function Index() {
-  const assetsQuery = trpc.assets.list.useQuery();
-  const bookingsQuery = trpc.bookings.list.useQuery();
-
   const navigate = Route.useNavigate();
   const { date, dateDelimiter, dateItemHeight, maxItemsCount } =
     Route.useSearch();
@@ -132,19 +130,6 @@ function Index() {
     });
   };
 
-  if (bookingsQuery.isPending) {
-    return <>Loading...</>;
-  }
-  if (bookingsQuery.isError) {
-    return <>{bookingsQuery.error.message}</>;
-  }
-  if (assetsQuery.isPending) {
-    return <>Loading...</>;
-  }
-  if (assetsQuery.isError) {
-    return <>{assetsQuery.error.message}</>;
-  }
-
   return (
     <appContext.Provider
       value={{
@@ -155,11 +140,6 @@ function Index() {
         dateToY,
         scrollPositionMs,
         scroll,
-        assets: assetsQuery.data,
-        // bookings: bookingsQuery.data.filter(
-        //   (b) => b.from >= startDate && b.to <= endDate,
-        // ),
-        bookings: bookingsQuery.data,
         scrollableContainerRef,
       }}
     >
