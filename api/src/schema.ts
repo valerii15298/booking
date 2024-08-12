@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import * as pgCore from "drizzle-orm/pg-core";
 
 export const assets = pgCore.pgTable("assets", {
@@ -14,3 +15,11 @@ export const bookings = pgCore.pgTable("bookings", {
     .notNull()
     .references(() => assets.id),
 });
+
+export const assetsRelations = relations(assets, ({ many }) => ({
+  bookings: many(bookings),
+}));
+
+export const bookingsRelations = relations(bookings, ({ one }) => ({
+  asset: one(assets),
+}));
