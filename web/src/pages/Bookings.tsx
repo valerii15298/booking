@@ -33,17 +33,10 @@ export function AssetsBookings() {
   const {
     assets,
     bookings,
-    startDate,
-    setStartDate: _setStartDate,
-    endDate,
-    setEndDate,
     dates,
     dateItemHeight,
-    setDateItemHeight: _setDateItemHeight,
-    scrollableContainerHeight,
     scrollableContainerRef,
     dateToY,
-    preloadDateInterval,
   } = useApp();
 
   useEffect(() => {
@@ -61,14 +54,6 @@ export function AssetsBookings() {
     <main
       ref={scrollableContainerRef}
       className="h-full overflow-y-auto hide-scrollbar"
-      onScroll={(e) => {
-        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-
-        if (scrollHeight - scrollTop <= clientHeight * 2 + 1) {
-          // TODO maybe we do not need lazy loading and can you buttons to load next and previous
-          setEndDate((prev) => prev + preloadDateInterval);
-        }
-      }}
     >
       <div className="relative">
         <Button
@@ -103,20 +88,19 @@ export function AssetsBookings() {
             </ul>
           </ResizablePanel>
           {assets.map((a) => {
-            const assetBookings = bookings
-              .filter((b) => b.assetId === a.id)
-              .filter((b) => b.from >= startDate && b.to <= endDate);
+            const assetBookings = bookings.filter((b) => b.assetId === a.id);
+
             return (
               <Fragment key={a.id}>
                 <ResizableHandle />
-                <ResizablePanel style={{ overflow: "visible" }}>
+                <ResizablePanel
+                  className="flex flex-col"
+                  style={{ overflow: "visible" }}
+                >
                   <CreateBooking {...a} />
                   <section
                     key={a.id}
-                    style={{
-                      height: scrollableContainerHeight,
-                    }}
-                    className="relative"
+                    className="relative flex-1 overflow-y-hidden"
                   >
                     {assetBookings.map(({ from, to, id }) => (
                       <Rnd

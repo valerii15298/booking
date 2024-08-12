@@ -1,18 +1,25 @@
-import { useRef, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useRef } from "react";
+import { z } from "zod";
 
+import { type AppContext, appContext } from "@/appContext/app";
+import { Interval, intervalSchema } from "@/interval";
+import { AssetsBookings } from "@/pages/Bookings";
 import { trpc } from "@/trpc";
 
-import type { AppContext } from "./app";
-import { appContext } from "./app";
+const validateSearch = z.object({
+  maxItemsCount: z.number().catch(100),
+  dateItemHeight: z.number().catch(50),
+  dateDelimiter: intervalSchema.catch(Interval.HOUR),
+  date: z.number().catch(Date.now()),
+  selectedBookingId: z.number().optional().catch(undefined),
+});
 
-export type Interval = number & { __brand: "Interval" };
-const SECOND = 1000 as Interval;
-const MINUTE = (60 * SECOND) as Interval;
-const HOUR = (60 * MINUTE) as Interval;
-const DAY = (24 * HOUR) as Interval;
-const WEEK = (7 * DAY) as Interval;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-const Interval = { SECOND, MINUTE, HOUR, DAY, WEEK } as const;
+export const Route = createFileRoute("/")({
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  component: Index,
+  validateSearch,
+});
 
 function roundDate(ts: number, interval: Interval) {
   return Math.round(ts / interval) * interval;
@@ -28,34 +35,34 @@ function getDates(startDate: number, endDate: number, dateDelimiter: number) {
   return dates;
 }
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+function Index() {
   const assetsQuery = trpc.assets.list.useQuery();
   const bookingsQuery = trpc.bookings.list.useQuery();
 
-  const [maxItemsCount, _setMaxItemsCount] = useState(100);
+  const navigate = Route.useNavigate();
+  const { date, dateDelimiter, dateItemHeight, maxItemsCount } =
+    Route.useSearch();
 
-  const [dateItemHeight, setDateItemHeight] = useState(50);
-  const [dateDelimiter, setDateDelimiter] = useState(HOUR);
-  const minDiffDateIntervalToFillWindow =
-    Math.ceil(window.outerHeight / dateItemHeight) * dateDelimiter;
-  const [preloadDateInterval, setPreloadDateInterval] = useState(
-    2 * minDiffDateIntervalToFillWindow,
+  function getStartDateFor(ts: number) {
+    return roundDate(ts - maxItemsCount * dateDelimiter, dateDelimiter);
+  }
+
+  const minItemsCount = 2 * Math.ceil(window.outerHeight / dateItemHeight);
+
+  if (maxItemsCount < minItemsCount) {
+    // TODO refactor
+    throw new Error(
+      `maxItemsCount should be greater than or equal to ${minItemsCount}`,
+    );
+  }
+
+  const startDate = getStartDateFor(date);
+  const endDate = roundDate(
+    date + maxItemsCount * dateDelimiter,
+    dateDelimiter,
   );
 
-  function getStartDateFor(ts = Date.now()) {
-    const countItemsBefore = maxItemsCount;
-    const dateDiff = countItemsBefore * dateDelimiter;
-    return roundDate(ts - dateDiff, dateDelimiter);
-  }
-  function getStartDateForNow() {
-    return getStartDateFor(Date.now());
-  }
-  const [startDate, setStartDate] = useState(getStartDateForNow);
-  const [endDate, setEndDate] = useState(Date.now() + preloadDateInterval);
-  // const maxEndDate = startDate + 2 * maxItemsCount * dateDelimiter;
-
   const dates = getDates(startDate, endDate, dateDelimiter);
-  const scrollableContainerHeight = dates.length * dateItemHeight;
 
   // eslint-disable-next-line func-style
   const dateToY: AppContext["dateToY"] = function dateToY(ts, params) {
@@ -97,7 +104,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // }
 
   // eslint-disable-next-line func-style
-  const scroll: AppContext["scroll"] = function scroll({
+  const scroll: AppContext["scroll"] = async function scroll({
     toDate,
     fromDate,
     behavior,
@@ -107,12 +114,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // so before doing this current position should be saved to url search params
     // also this function should be used for jump to date user functionality
 
-    const newStartDate = roundDate(toDate - preloadDateInterval, dateDelimiter);
-    const newEndDate = roundDate(toDate + preloadDateInterval, dateDelimiter);
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
-
-    setTimeout(() => {
+    // TODO navigate
+    return navigate({
+      search: (prev) => ({ ...prev, date: toDate }),
+    }).then(() => {
+      const newStartDate = getStartDateFor(toDate);
       if (behavior === "smooth" && fromDate) {
         scrollableContainerRef.current?.scrollTo({
           top: dateToY(fromDate, { startDate: newStartDate }),
@@ -142,27 +148,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <appContext.Provider
       value={{
-        startDate,
-        setStartDate,
-        endDate,
-        setEndDate,
         dateDelimiter,
-        setDateDelimiter,
         dates,
+        startDate,
         dateItemHeight,
-        setDateItemHeight,
         dateToY,
         scrollPositionMs,
         scroll,
         assets: assetsQuery.data,
+        // bookings: bookingsQuery.data.filter(
+        //   (b) => b.from >= startDate && b.to <= endDate,
+        // ),
         bookings: bookingsQuery.data,
-        scrollableContainerHeight,
         scrollableContainerRef,
-        preloadDateInterval,
-        setPreloadDateInterval,
       }}
     >
-      {children}
+      <AssetsBookings />
     </appContext.Provider>
   );
 }

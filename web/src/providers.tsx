@@ -3,7 +3,6 @@ import { httpBatchLink, loggerLink } from "@trpc/client";
 import { useState } from "react";
 import superjson from "superjson";
 
-import { AppProvider } from "./appContext/AppProvider";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { trpc } from "./trpc";
 
@@ -21,9 +20,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <AppProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-        </AppProvider>
+        <TooltipProvider>{children}</TooltipProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );

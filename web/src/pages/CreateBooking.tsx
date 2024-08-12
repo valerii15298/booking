@@ -75,7 +75,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
                 const currentScrollMs = scrollPositionMs();
 
                 // TODO go back to current position in case of an error and setOpen back to true(test with disabled network)
-                scroll({
+                void scroll({
                   toDate: data.from.getTime(),
                   fromDate: currentScrollMs,
                   behavior: "smooth",
