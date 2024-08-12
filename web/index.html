@@ -6,8 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booking</title>
   </head>
+  <style>
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    html,
+    body,
+    #app {
+      height: 100%;
+      overscroll-behavior-y: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+  </style>
   <body>
-    <div id="app" class="h-full"></div>
+    <div id="app">
+      <div
+        style="
+          display: grid;
+          height: 100%;
+          place-items: center;
+          overflow: hidden;
+        "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-loader-circle animate-spin"
+          style="height: min(50vh, 50vw); width: min(50vh, 50vw)"
+        >
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
