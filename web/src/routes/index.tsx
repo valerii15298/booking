@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef } from "react";
 import { z } from "zod";
 
-import { appContext } from "@/appContext/app";
+import { app } from "@/app/app";
 import { Interval, intervalSchema } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
 
@@ -94,7 +94,7 @@ function Index() {
   }, [date, dateToY]);
 
   return (
-    <appContext.Provider
+    <app.Provider
       value={{
         dateDelimiter,
         dates,
@@ -106,6 +106,6 @@ function Index() {
       }}
     >
       <AssetsBookings />
-    </appContext.Provider>
+    </app.Provider>
   );
 }

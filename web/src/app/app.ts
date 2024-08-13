@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 import type { Interval } from "@/interval";
 
-export interface AppContext {
+export interface App {
   startDate: number;
   dateDelimiter: Interval;
   dateItemHeight: number;
@@ -11,4 +11,4 @@ export interface AppContext {
   dates: number[];
   scrollableContainerRef: React.RefObject<HTMLElement>;
 }
-export const appContext = createContext<AppContext | null>(null);
+export const app = createContext<App | null>(null);

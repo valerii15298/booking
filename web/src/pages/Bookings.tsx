@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
-import { useApp } from "@/appContext/useApp";
+import { useApp } from "@/app/useApp";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
