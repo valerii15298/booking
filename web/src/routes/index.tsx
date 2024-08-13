@@ -6,8 +6,30 @@ import { app } from "@/app/app";
 import { Interval } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
 
+function dateFromISO(str: string) {
+  return str.split(".")[0]!.replaceAll(":", "-");
+}
+
+function dateToISO(str: string) {
+  const [date, time] = str.split("T");
+  return `${date}T${time!.replaceAll("-", ":")}Z`;
+}
+
+const dateSchema = z.string().refine(
+  (v) => {
+    const parsed = dateToISO(v);
+    const date = new Date(parsed);
+    return (
+      date.getTime() && date.toISOString().split(".")[0] === parsed.slice(0, -1)
+    );
+  },
+  {
+    message: "Invalid date",
+  },
+);
+
 const validateSearch = z.object({
-  date: z.number().catch(Date.now()),
+  date: dateSchema.catch(dateFromISO(new Date().toISOString())),
   selectedBookingId: z.number().optional().catch(undefined),
 });
 
@@ -31,9 +53,10 @@ function getDates(startDate: number, endDate: number, dateDelimiter: number) {
   }
   return dates;
 }
-
 function Index() {
-  const { date } = Route.useSearch();
+  const { date: rawDate } = Route.useSearch();
+  const isoDate = dateToISO(rawDate);
+  const date = new Date(isoDate).getTime();
 
   const [maxItemsCount, setMaxItemsCount] = useState(100);
   const [dateItemHeight, setDateItemHeight] = useState(50);
