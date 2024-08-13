@@ -1,9 +1,10 @@
 import "./globals.css";
 
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 
+import { loading } from "./loading";
 import { Providers } from "./providers";
 import { routeTree } from "./routeTree.gen";
 
@@ -16,9 +17,9 @@ declare module "@tanstack/react-router" {
 }
 
 ReactDOM.createRoot(document.getElementById("app")!).render(
-  <React.StrictMode>
+  <StrictMode>
     <Providers>
-      <RouterProvider router={router} />
+      <RouterProvider defaultPendingComponent={() => loading} router={router} />
     </Providers>
-  </React.StrictMode>,
+  </StrictMode>,
 );

@@ -33,8 +33,6 @@ const enableResizing: ResizeEnable = {
 export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
 
-  const { data: bookings = [] } = trpc.bookings.list.useQuery();
-
   const { dates, dateItemHeight, scrollableContainerRef, dateToY } = useApp();
 
   useEffect(() => {
@@ -85,67 +83,64 @@ export function AssetsBookings() {
               ))}
             </ul>
           </ResizablePanel>
-          {assets.map((a) => {
-            const assetBookings = bookings.filter((b) => b.assetId === a.id);
 
-            return (
-              <Fragment key={a.id}>
-                <ResizableHandle />
-                <ResizablePanel
-                  className="flex flex-col"
-                  style={{ overflow: "visible" }}
+          {assets.map((a) => (
+            <Fragment key={a.id}>
+              <ResizableHandle />
+              <ResizablePanel
+                className="flex flex-col"
+                style={{ overflow: "visible" }}
+              >
+                <CreateBooking {...a} />
+                <section
+                  key={a.id}
+                  className="relative flex-1 overflow-y-hidden"
                 >
-                  <CreateBooking {...a} />
-                  <section
-                    key={a.id}
-                    className="relative flex-1 overflow-y-hidden"
-                  >
-                    {assetBookings.map(({ from, to, id }) => (
-                      <Rnd
-                        className="bg-blue-500"
-                        key={id}
-                        title={`${new Date(from).toLocaleString()}\n${new Date(to).toLocaleString()}`}
-                        bounds="parent"
-                        enableResizing={enableResizing}
-                        size={{
-                          width: "100%",
-                          height: dateToY(to) - dateToY(from),
-                        }}
-                        position={{
-                          x: 0,
-                          y: dateToY(from),
-                        }}
-                        // onDragStop={(_e, d) => {
-                        //   const _ = d.y;
-                        // }}
+                  {a.bookings.map(({ from, to, id }) => (
+                    <Rnd
+                      className="bg-blue-500"
+                      key={id}
+                      title={`${from.toLocaleString()}\n${to.toLocaleString()}`}
+                      bounds="parent"
+                      enableResizing={enableResizing}
+                      size={{
+                        width: "100%",
+                        height: dateToY(to.getTime()) - dateToY(from.getTime()),
+                      }}
+                      position={{
+                        x: 0,
+                        y: dateToY(from.getTime()),
+                      }}
+                      // onDragStop={(_e, d) => {
+                      //   const _ = d.y;
+                      // }}
 
-                        // onResizeStop={(_e, _direction, ref, _delta, position) => {
-                        //   const _ = {
-                        //     width: "100%",
-                        //     height: ref.style.height,
-                        //     ...position,
-                        //   };
-                        // }}
-                      >
-                        <Tooltip>
-                          <TooltipTrigger>
-                            {new Date(from).toLocaleTimeString()}
-                          </TooltipTrigger>
-                          <TooltipPortal>
-                            <TooltipContent>
-                              {new Date(from).toLocaleString()}
-                              <br />
-                              {new Date(to).toLocaleString()}
-                            </TooltipContent>
-                          </TooltipPortal>
-                        </Tooltip>
-                      </Rnd>
-                    ))}
-                  </section>
-                </ResizablePanel>
-              </Fragment>
-            );
-          })}
+                      // onResizeStop={(_e, _direction, ref, _delta, position) => {
+                      //   const _ = {
+                      //     width: "100%",
+                      //     height: ref.style.height,
+                      //     ...position,
+                      //   };
+                      // }}
+                    >
+                      <Tooltip>
+                        <TooltipTrigger>
+                          {new Date(from).toLocaleTimeString()}
+                        </TooltipTrigger>
+                        <TooltipPortal>
+                          <TooltipContent>
+                            {new Date(from).toLocaleString()}
+                            <br />
+                            {new Date(to).toLocaleString()}
+                          </TooltipContent>
+                        </TooltipPortal>
+                      </Tooltip>
+                    </Rnd>
+                  ))}
+                </section>
+              </ResizablePanel>
+            </Fragment>
+          ))}
         </ResizablePanelGroup>
         <Button
           variant={"outline"}

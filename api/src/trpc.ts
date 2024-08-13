@@ -12,7 +12,7 @@ const t = initTRPC.context<Context>().create({
 export const appRouter = t.router({
   assets: {
     list: t.procedure.query(async ({ ctx: { db } }) =>
-      db.query.assets.findMany(),
+      db.query.assets.findMany({ with: { bookings: true } }),
     ),
 
     // CRUD

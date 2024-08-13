@@ -21,5 +21,8 @@ export const assetsRelations = relations(assets, ({ many }) => ({
 }));
 
 export const bookingsRelations = relations(bookings, ({ one }) => ({
-  asset: one(assets),
+  asset: one(assets, {
+    fields: [bookings.assetId],
+    references: [assets.id],
+  }),
 }));

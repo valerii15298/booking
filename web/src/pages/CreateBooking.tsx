@@ -47,6 +47,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
       to: new Date(),
       assetId: id,
     },
+    disabled: createBooking.isPending,
     resolver: zodResolver(zod.bookingInput),
   });
 
@@ -121,7 +122,11 @@ export function CreateBooking({ id, name }: Types.Asset) {
           </form>
         </Form>
         <DialogFooter>
-          <Button form={formId} type="submit">
+          <Button
+            disabled={form.formState.disabled}
+            form={formId}
+            type="submit"
+          >
             Create
           </Button>
         </DialogFooter>
