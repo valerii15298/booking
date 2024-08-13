@@ -5,7 +5,6 @@ import { z } from "zod";
 import { type AppContext, appContext } from "@/appContext/app";
 import { Interval, intervalSchema } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
-import { trpcUtils } from "@/trpc";
 
 const validateSearch = z.object({
   maxItemsCount: z.number().catch(100),
@@ -19,7 +18,7 @@ export const Route = createFileRoute("/")({
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   component: Index,
   validateSearch,
-  loader: async () => trpcUtils.assets.list.ensureData(),
+  loader: async (c) => c.context.utils.assets.list.ensureData(),
 });
 
 function roundDate(ts: number, interval: Interval) {

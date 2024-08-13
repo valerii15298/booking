@@ -1,5 +1,8 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import type { createTRPCQueryUtils } from "@trpc/react-query";
 import React, { Suspense } from "react";
+
+import type { AppRouter } from "@/trpc";
 
 const TanStackRouterDevtools = import.meta.env.VITE_TAN_STACK_DEV_TOOLS
   ? React.lazy(async () =>
@@ -10,7 +13,10 @@ const TanStackRouterDevtools = import.meta.env.VITE_TAN_STACK_DEV_TOOLS
       })),
     )
   : () => null;
-export const Route = createRootRoute({
+
+export const Route = createRootRouteWithContext<{
+  utils: ReturnType<typeof createTRPCQueryUtils<AppRouter>>;
+}>()({
   component: () => (
     <Suspense>
       <Outlet />
