@@ -31,7 +31,7 @@
     "react-resizable-panels": "^2.0.23",
     "react-rnd": "10.4.12",
     "superjson": "^2.2.1",
-    "tailwind-merge": "^2.5.0",
+    "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
   },
