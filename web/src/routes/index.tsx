@@ -1,15 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
 import { app } from "@/app/app";
-import { Interval, intervalSchema } from "@/interval";
+import { Interval } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
 
 const validateSearch = z.object({
-  maxItemsCount: z.number().catch(100),
-  dateItemHeight: z.number().catch(50),
-  dateDelimiter: intervalSchema.catch(Interval.HOUR),
   date: z.number().catch(Date.now()),
   selectedBookingId: z.number().optional().catch(undefined),
 });
@@ -36,8 +33,11 @@ function getDates(startDate: number, endDate: number, dateDelimiter: number) {
 }
 
 function Index() {
-  const { date, dateDelimiter, dateItemHeight, maxItemsCount } =
-    Route.useSearch();
+  const { date } = Route.useSearch();
+
+  const [maxItemsCount, setMaxItemsCount] = useState(100);
+  const [dateItemHeight, setDateItemHeight] = useState(50);
+  const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
 
   function getStartDateFor(ts: number) {
     return roundDate(ts - maxItemsCount * dateDelimiter, dateDelimiter);
@@ -96,13 +96,16 @@ function Index() {
   return (
     <app.Provider
       value={{
-        dateDelimiter,
         dates,
         dateToY,
         yToDate,
-        startDate,
-        dateItemHeight,
         scrollableContainerRef,
+        maxItemsCount,
+        setMaxItemsCount,
+        dateItemHeight,
+        setDateItemHeight,
+        dateDelimiter,
+        setDateDelimiter,
       }}
     >
       <AssetsBookings />
