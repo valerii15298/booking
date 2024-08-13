@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getRouteApi } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { useApp } from "@/appContext/useApp";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,13 +32,15 @@ function formatDateTime(date: Date) {
 
   return `${dateStr}T${hours}:${minutes}` as const;
 }
+
+const routeApi = getRouteApi("/");
 export function CreateBooking({ id, name }: Types.Asset) {
   const [open, setOpen] = useState(false);
-  const { scroll, scrollPositionMs } = useApp();
   const utils = trpc.useUtils();
+  const navigate = routeApi.useNavigate();
   const createBooking = trpc.bookings.create.useMutation({
     onSuccess() {
-      void utils.bookings.invalidate();
+      void utils.assets.list.invalidate();
     },
   });
   const form = useForm({
@@ -73,14 +75,9 @@ export function CreateBooking({ id, name }: Types.Asset) {
               void form.handleSubmit((data, e) => {
                 setOpen(false);
                 e?.preventDefault();
-                const currentScrollMs = scrollPositionMs();
 
                 // TODO go back to current position in case of an error and setOpen back to true(test with disabled network)
-                void scroll({
-                  toDate: data.from.getTime(),
-                  fromDate: currentScrollMs,
-                  behavior: "smooth",
-                });
+                void navigate({ search: { date: data.from.getTime() } });
 
                 void createBooking.mutateAsync(data);
               })(e);

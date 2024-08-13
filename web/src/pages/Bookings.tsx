@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -34,17 +34,6 @@ export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
 
   const { dates, dateItemHeight, scrollableContainerRef, dateToY } = useApp();
-
-  useEffect(() => {
-    // TODO refactor to use tanstack router
-    if (scrollableContainerRef.current) {
-      scrollableContainerRef.current.scrollTo({
-        top: dateToY(Date.now()),
-        behavior: "instant",
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <main

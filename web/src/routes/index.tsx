@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { z } from "zod";
 
-import { type AppContext, appContext } from "@/appContext/app";
+import { appContext } from "@/appContext/app";
 import { Interval, intervalSchema } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
 
@@ -36,7 +36,6 @@ function getDates(startDate: number, endDate: number, dateDelimiter: number) {
 }
 
 function Index() {
-  const navigate = Route.useNavigate();
   const { date, dateDelimiter, dateItemHeight, maxItemsCount } =
     Route.useSearch();
 
@@ -61,84 +60,48 @@ function Index() {
 
   const dates = getDates(startDate, endDate, dateDelimiter);
 
-  // eslint-disable-next-line func-style
-  const dateToY: AppContext["dateToY"] = function dateToY(ts, params) {
-    const p = {
-      startDate,
-      dateDelimiter,
-      dateItemHeight,
-      ...params,
-    };
-    // (date milliseconds diff) multiple by (pixels per millisecond ratio)
-    return ((ts - p.startDate) * p.dateItemHeight) / p.dateDelimiter;
-  };
+  const dateToY = useCallback(
+    (ts: number) =>
+      // (date milliseconds diff) multiple by (pixels per millisecond ratio)
+      ((ts - startDate) * dateItemHeight) / dateDelimiter,
+    [dateDelimiter, dateItemHeight, startDate],
+  );
 
-  // TODO fix rule func-style which is currently set to ["error", "declaration"],
-  // eslint-disable-next-line func-style
-  const yToDate = function yToDate(y: number, params?: Partial<AppContext>) {
-    const p = {
-      startDate,
-      dateDelimiter,
-      dateItemHeight,
-      ...params,
-    };
-    // startDate + milliseconds diff
-    // startDate + ((pixels diff) multiple by (milliseconds per pixel ratio))
-    return p.startDate + (y * p.dateDelimiter) / p.dateItemHeight;
-  };
+  const yToDate = useCallback(
+    (y: number) =>
+      // startDate + milliseconds diff
+      // startDate + ((pixels diff) multiple by (milliseconds per pixel ratio))
+      startDate + (y * dateDelimiter) / dateItemHeight,
+    [dateDelimiter, dateItemHeight, startDate],
+  );
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
-  function scrollPositionMs() {
-    return yToDate(scrollableContainerRef.current?.scrollTop ?? 0);
-  }
 
-  // if ((endDate - startDate) % dateDelimiter !== 0) {
-  //   // eslint-disable-next-line no-console
-  //   console.log((endDate - startDate) % dateDelimiter);
-  //   console.error(
-  //     `Error: (endDate - startDate) should be always dividable by dateDelimiter. Current values: startDate=${startDate}, endDate=${endDate}, dateDelimiter=${dateDelimiter}`,
-  //   );
-  // }
+  const prevDateRef = useRef(date);
 
-  // eslint-disable-next-line func-style
-  const scroll: AppContext["scroll"] = async function scroll({
-    toDate,
-    fromDate,
-    behavior,
-    // TODO type: 'top' | 'bottom' | 'center'
-  }) {
-    // state should be pushed to url search params so that user should be able to go back to previous position
-    // so before doing this current position should be saved to url search params
-    // also this function should be used for jump to date user functionality
+  useEffect(() => {
+    if (!scrollableContainerRef.current) return;
 
-    // TODO navigate
-    return navigate({
-      search: (prev) => ({ ...prev, date: toDate }),
-    }).then(() => {
-      const newStartDate = getStartDateFor(toDate);
-      if (behavior === "smooth" && fromDate) {
-        scrollableContainerRef.current?.scrollTo({
-          top: dateToY(fromDate, { startDate: newStartDate }),
-          behavior: "instant",
-        });
-      }
-      scrollableContainerRef.current?.scrollTo({
-        top: dateToY(toDate, { startDate: newStartDate }),
-        ...(behavior ? { behavior } : {}),
-      });
+    scrollableContainerRef.current.scrollTo({
+      top: dateToY(prevDateRef.current),
+      behavior: "instant",
     });
-  };
+    scrollableContainerRef.current.scrollTo({
+      top: dateToY(date),
+      behavior: "smooth",
+    });
+    prevDateRef.current = date;
+  }, [date, dateToY]);
 
   return (
     <appContext.Provider
       value={{
         dateDelimiter,
         dates,
+        dateToY,
+        yToDate,
         startDate,
         dateItemHeight,
-        dateToY,
-        scrollPositionMs,
-        scroll,
         scrollableContainerRef,
       }}
     >

@@ -6,13 +6,8 @@ export interface AppContext {
   startDate: number;
   dateDelimiter: Interval;
   dateItemHeight: number;
-  scroll: (params: {
-    toDate: number;
-    fromDate?: number;
-    behavior?: ScrollBehavior;
-  }) => Promise<void>;
-  scrollPositionMs: () => number;
-  dateToY: (ts: number, params?: Partial<AppContext>) => number;
+  dateToY: (ts: number) => number;
+  yToDate: (y: number) => number;
   dates: number[];
   scrollableContainerRef: React.RefObject<HTMLElement>;
 }
