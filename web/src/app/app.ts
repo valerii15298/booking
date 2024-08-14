@@ -10,6 +10,7 @@ export type App = {
   yToDate: (y: number) => number;
   dates: number[];
   scrollableContainerRef: React.RefObject<HTMLElement>;
+  preload: () => void;
 } & UseState<number, "maxItemsCount"> &
   UseState<number, "dateItemHeight"> &
   UseState<Interval, "dateDelimiter">;

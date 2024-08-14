@@ -3,30 +3,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
 import { app } from "@/app/app";
+import {
+  dateFromISO,
+  dateSchema,
+  dateToISO,
+  getDates,
+  roundDate,
+} from "@/dates";
 import { Interval } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
-
-function dateFromISO(str: string) {
-  return str.split(".")[0]!.replaceAll(":", "-");
-}
-
-function dateToISO(str: string) {
-  const [date, time] = str.split("T");
-  return `${date}T${time!.replaceAll("-", ":")}Z`;
-}
-
-const dateSchema = z.string().refine(
-  (v) => {
-    const parsed = dateToISO(v);
-    const date = new Date(parsed);
-    return (
-      date.getTime() && date.toISOString().split(".")[0] === parsed.slice(0, -1)
-    );
-  },
-  {
-    message: "Invalid date",
-  },
-);
 
 const validateSearch = z.object({
   date: dateSchema.catch(dateFromISO(new Date().toISOString())),
@@ -40,20 +25,9 @@ export const Route = createFileRoute("/")({
   loader: async (c) => c.context.utils.assets.list.ensureData(),
 });
 
-function roundDate(ts: number, interval: Interval) {
-  return Math.round(ts / interval) * interval;
-}
-
-function getDates(startDate: number, endDate: number, dateDelimiter: number) {
-  const dates = [];
-  let currentDate = startDate;
-  while (currentDate < endDate) {
-    dates.push(currentDate);
-    currentDate += dateDelimiter;
-  }
-  return dates;
-}
+const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
 function Index() {
+  const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();
   const isoDate = dateToISO(rawDate);
   const date = new Date(isoDate).getTime();
@@ -62,9 +36,11 @@ function Index() {
   const [dateItemHeight, setDateItemHeight] = useState(50);
   const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
 
-  function getStartDateFor(ts: number) {
-    return roundDate(ts - maxItemsCount * dateDelimiter, dateDelimiter);
-  }
+  const getStartDateFor = useCallback(
+    (ts: number) =>
+      roundDate(ts - maxItemsCount * dateDelimiter, dateDelimiter),
+    [dateDelimiter, maxItemsCount],
+  );
 
   const minItemsCount = 2 * Math.ceil(window.outerHeight / dateItemHeight);
 
@@ -76,10 +52,7 @@ function Index() {
   }
 
   const startDate = getStartDateFor(date);
-  const endDate = roundDate(
-    date + maxItemsCount * dateDelimiter,
-    dateDelimiter,
-  );
+  const endDate = startDate + 2 * maxItemsCount * dateDelimiter;
 
   const dates = getDates(startDate, endDate, dateDelimiter);
 
@@ -102,6 +75,7 @@ function Index() {
 
   const prevDateRef = useRef(date);
 
+  const scrollBehaviorRef = useRef<ScrollBehavior>(DEFAULT_SCROLL_BEHAVIOR);
   useEffect(() => {
     if (!scrollableContainerRef.current) return;
 
@@ -111,11 +85,20 @@ function Index() {
     });
     scrollableContainerRef.current.scrollTo({
       top: dateToY(date),
-      behavior: "smooth",
+      behavior: scrollBehaviorRef.current,
     });
+    scrollBehaviorRef.current = DEFAULT_SCROLL_BEHAVIOR;
     prevDateRef.current = date;
   }, [date, dateToY]);
 
+  function preload() {
+    if (!scrollableContainerRef.current) return;
+    const currDate = yToDate(scrollableContainerRef.current.scrollTop);
+    scrollBehaviorRef.current = "instant";
+    void navigate({
+      search: { date: dateFromISO(new Date(currDate).toISOString()) },
+    });
+  }
   return (
     <app.Provider
       value={{
@@ -129,6 +112,7 @@ function Index() {
         setDateItemHeight,
         dateDelimiter,
         setDateDelimiter,
+        preload,
       }}
     >
       <AssetsBookings />

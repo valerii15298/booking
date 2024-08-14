@@ -33,7 +33,8 @@ const enableResizing: ResizeEnable = {
 export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
 
-  const { dates, dateItemHeight, scrollableContainerRef, dateToY } = useApp();
+  const { dates, dateItemHeight, scrollableContainerRef, dateToY, preload } =
+    useApp();
 
   return (
     <main
@@ -44,6 +45,7 @@ export function AssetsBookings() {
         <Button
           variant={"outline"}
           className="absolute left-[50%] top-2 z-20 translate-x-[-50%]"
+          onClick={preload}
         >
           Load Previous
         </Button>
@@ -134,6 +136,7 @@ export function AssetsBookings() {
         <Button
           variant={"outline"}
           className="absolute bottom-2 left-[50%] z-20 translate-x-[-50%]"
+          onClick={preload}
         >
           Load Next
         </Button>

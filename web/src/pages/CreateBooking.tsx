@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form, FormField } from "@/components/ui/form";
+import { dateFromISO } from "@/dates";
 import { trpc } from "@/trpc";
 import { type Types, zod } from "@/zod";
 
@@ -77,7 +78,9 @@ export function CreateBooking({ id, name }: Types.Asset) {
                 e?.preventDefault();
 
                 // TODO go back to current position in case of an error and setOpen back to true(test with disabled network)
-                void navigate({ search: { date: data.from.getTime() } });
+                void navigate({
+                  search: { date: dateFromISO(data.from.toISOString()) },
+                });
 
                 void createBooking.mutateAsync(data);
               })(e);
