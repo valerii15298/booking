@@ -1,3 +1,4 @@
+import { CubeIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
@@ -23,19 +24,20 @@ const enableResizing: ResizeEnable = {
   topLeft: false,
 };
 export function Booking(b: Types.Booking) {
-  const { from, to } = b;
-  const { dateToY, yToDate } = useApp();
-  const [tooltipOpen, setTooltipOpen] = useState(false);
   const utils = trpc.useUtils();
   const update = trpc.bookings.update.useMutation({
     async onSuccess() {
       return utils.assets.list.invalidate();
     },
   });
+  const { dateToY, yToDate } = useApp();
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const { from, to } = update.isPending ? update.variables : b;
 
   return (
     <Rnd
-      className="bg-blue-500"
+      className="bg-cyan-400"
       // discouraged to use because of bad mobile support
       // title={`${from.toLocaleString()}\n${to.toLocaleString()}`}
       bounds="parent"
@@ -68,7 +70,9 @@ export function Booking(b: Types.Booking) {
           }}
           className="h-full w-full"
         >
-          {from.toLocaleTimeString()}
+          {update.isPending && (
+            <CubeIcon className={`m-auto h-[50%] w-[50%] animate-spin`} />
+          )}
         </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent>
