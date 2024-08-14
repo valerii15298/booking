@@ -116,13 +116,13 @@ export function AssetsBookings() {
                     >
                       <Tooltip>
                         <TooltipTrigger>
-                          {new Date(from).toLocaleTimeString()}
+                          {from.toLocaleTimeString()}
                         </TooltipTrigger>
                         <TooltipPortal>
                           <TooltipContent>
-                            {new Date(from).toLocaleString()}
+                            {from.toLocaleString()}
                             <br />
-                            {new Date(to).toLocaleString()}
+                            {to.toLocaleString()}
                           </TooltipContent>
                         </TooltipPortal>
                       </Tooltip>
