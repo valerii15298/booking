@@ -37,7 +37,7 @@ export function Booking(b: Types.Booking) {
 
   return (
     <Rnd
-      className="bg-cyan-400"
+      className="bg-foreground text-white"
       // discouraged to use because of bad mobile support
       // title={`${from.toLocaleString()}\n${to.toLocaleString()}`}
       bounds="parent"
