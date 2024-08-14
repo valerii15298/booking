@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -22,6 +23,7 @@ const enableResizing: ResizeEnable = {
 };
 export function Booking({ from, to }: Types.BookingInput) {
   const { dateToY } = useApp();
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   return (
     <Rnd
       className="bg-blue-500"
@@ -49,8 +51,15 @@ export function Booking({ from, to }: Types.BookingInput) {
       //   };
       // }}
     >
-      <Tooltip>
-        <TooltipTrigger>{from.toLocaleTimeString()}</TooltipTrigger>
+      <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+        <TooltipTrigger
+          onClick={() => {
+            setTooltipOpen(true);
+          }}
+          className="h-full w-full"
+        >
+          {from.toLocaleTimeString()}
+        </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent>
             {from.toLocaleString()}
