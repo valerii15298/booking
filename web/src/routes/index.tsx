@@ -14,7 +14,7 @@ import { Interval } from "@/interval";
 import { AssetsBookings } from "@/pages/Bookings";
 
 const validateSearch = z.object({
-  date: dateSchema.catch(dateFromISO(new Date().toISOString())),
+  date: dateSchema.optional().catch(undefined),
   selectedBookingId: z.number().optional().catch(undefined),
 });
 
@@ -29,8 +29,7 @@ const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
 function Index() {
   const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();
-  const isoDate = dateToISO(rawDate);
-  const date = new Date(isoDate).getTime();
+  const date = rawDate ? new Date(dateToISO(rawDate)).getTime() : Date.now();
 
   const [maxItemsCount, setMaxItemsCount] = useState(100);
   const [dateItemHeight, setDateItemHeight] = useState(50);
