@@ -9,6 +9,7 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { trpc } from "@/trpc";
 import type { Types } from "@/zod";
 
 const enableResizing: ResizeEnable = {
@@ -21,13 +22,22 @@ const enableResizing: ResizeEnable = {
   bottomLeft: false,
   topLeft: false,
 };
-export function Booking({ from, to }: Types.BookingInput) {
-  const { dateToY } = useApp();
+export function Booking(b: Types.Booking) {
+  const { from, to } = b;
+  const { dateToY, yToDate } = useApp();
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const utils = trpc.useUtils();
+  const update = trpc.bookings.update.useMutation({
+    async onSuccess() {
+      return utils.assets.list.invalidate();
+    },
+  });
+
   return (
     <Rnd
       className="bg-blue-500"
-      title={`${from.toLocaleString()}\n${to.toLocaleString()}`}
+      // discouraged to use because of bad mobile support
+      // title={`${from.toLocaleString()}\n${to.toLocaleString()}`}
       bounds="parent"
       enableResizing={enableResizing}
       size={{
@@ -38,18 +48,18 @@ export function Booking({ from, to }: Types.BookingInput) {
         x: 0,
         y: dateToY(from.getTime()),
       }}
-
       // onDragStop={(_e, d) => {
       //   const _ = d.y;
       // }}
 
-      // onResizeStop={(_e, _direction, ref, _delta, position) => {
-      //   const _ = {
-      //     width: "100%",
-      //     height: ref.style.height,
-      //     ...position,
-      //   };
-      // }}
+      // eslint-disable-next-line @typescript-eslint/max-params
+      onResizeStop={(_e, _direction, ref, _delta, position) => {
+        update.mutate({
+          ...b,
+          from: new Date(yToDate(position.y)),
+          to: new Date(yToDate(position.y + ref.clientHeight)),
+        });
+      }}
     >
       <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
         <TooltipTrigger

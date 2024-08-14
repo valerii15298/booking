@@ -40,8 +40,8 @@ export function CreateBooking({ id, name }: Types.Asset) {
   const utils = trpc.useUtils();
   const navigate = routeApi.useNavigate();
   const createBooking = trpc.bookings.create.useMutation({
-    onSuccess() {
-      void utils.assets.list.invalidate();
+    async onSuccess() {
+      return utils.assets.list.invalidate();
     },
   });
   const form = useForm({
