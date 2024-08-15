@@ -11,7 +11,7 @@ import { trpc } from "@/trpc";
 
 import { Booking } from "./Booking";
 import { CreateBooking } from "./CreateBooking";
-import { Settings } from "./Settings";
+import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
