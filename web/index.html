@@ -21,12 +21,23 @@
       margin: 0;
     }
 
-    input::-webkit-datetime-edit-minute-field:focus,
-    input::-webkit-datetime-edit-hour-field:focus,
-    input::-webkit-datetime-edit-day-field:focus,
-    input::-webkit-datetime-edit-month-field:focus,
-    input::-webkit-datetime-edit-year-field:focus {
-      color: white;
+    html.light {
+      * {
+        color-scheme: light;
+      }
+      input::-webkit-datetime-edit-minute-field:focus,
+      input::-webkit-datetime-edit-hour-field:focus,
+      input::-webkit-datetime-edit-day-field:focus,
+      input::-webkit-datetime-edit-month-field:focus,
+      input::-webkit-datetime-edit-year-field:focus {
+        color: white;
+      }
+    }
+
+    html.dark {
+      * {
+        color-scheme: dark;
+      }
     }
 
     * {
