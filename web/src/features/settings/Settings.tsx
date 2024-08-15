@@ -35,7 +35,7 @@ export function Settings() {
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
-            Choose a preferred theme, zoom level, date range, and more.
+            Choose a preferred theme, zoom level, jump to date, and more.
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-5">
