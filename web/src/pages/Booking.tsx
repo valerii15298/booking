@@ -48,10 +48,13 @@ export function Booking(b: Types.Booking) {
         x: 0,
         y: dateToY(from.getTime()),
       }}
-      // onDragStop={(_e, d) => {
-      //   const _ = d.y;
-      // }}
-
+      onDragStop={(_, { y }) => {
+        update.mutate({
+          ...b,
+          from: new Date(yToDate(y)),
+          to: new Date(yToDate(y) + (b.to.getTime() - b.from.getTime())),
+        });
+      }}
       // eslint-disable-next-line @typescript-eslint/max-params
       onResizeStop={(_e, _direction, ref, _delta, position) => {
         update.mutate({
