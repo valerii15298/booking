@@ -11,6 +11,7 @@ import { trpc } from "@/trpc";
 
 import { Booking } from "./Booking";
 import { CreateBooking } from "./CreateBooking";
+import { Settings } from "./Settings";
 
 export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
@@ -36,20 +37,11 @@ export function AssetsBookings() {
           style={{ overflow: "visible" }}
         >
           <ResizablePanel style={{ overflow: "visible" }}>
-            <Button className="sticky top-0 w-full rounded-none">
-              Settings
-            </Button>
+            <Settings />
 
             <ul>
-              {dates.map((item, i) => (
-                <li
-                  className="border bg-black text-white"
-                  style={{
-                    height: dateItemHeight,
-                    backgroundColor: i % 2 ? "gray" : undefined,
-                  }}
-                  key={item}
-                >
+              {dates.map((item) => (
+                <li style={{ height: dateItemHeight }} key={item}>
                   {new Date(item).toLocaleString()}
                 </li>
               ))}

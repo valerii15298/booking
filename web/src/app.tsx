@@ -5,6 +5,7 @@ import { createTRPCQueryUtils } from "@trpc/react-query";
 import { useState } from "react";
 import transformer from "superjson";
 
+import { ThemeProvider } from "./components/theme/theme-provider";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { loading } from "./loading";
 import { routeTree } from "./routeTree.gen";
@@ -35,13 +36,15 @@ export function App() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <RouterProvider
-            defaultPendingComponent={() => loading}
-            router={router}
-            context={{ utils }}
-          />
-        </TooltipProvider>
+        <ThemeProvider defaultTheme="system">
+          <TooltipProvider>
+            <RouterProvider
+              defaultPendingComponent={() => loading}
+              router={router}
+              context={{ utils }}
+            />
+          </TooltipProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );
