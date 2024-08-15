@@ -10,19 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 
+import { DateItemHeightSetting } from "./DateItemHeightSetting";
 import { IntervalSetting } from "./IntervalSetting";
 
 export function Settings() {
-  const {
-    dateItemHeight,
-    setDateItemHeight,
-    minDateItemHeight,
-    maxDateItemHeight,
-    preload,
-  } = useApp();
+  const { preload } = useApp();
 
   return (
     <Dialog
@@ -49,16 +42,7 @@ export function Settings() {
           <ModeToggle />
           <IntervalSetting />
         </div>
-        <Label>Block Height</Label>
-        <Slider
-          value={[dateItemHeight]}
-          onValueChange={([newValue]) => {
-            if (newValue) setDateItemHeight(newValue);
-          }}
-          min={minDateItemHeight}
-          step={1}
-          max={maxDateItemHeight}
-        />
+        <DateItemHeightSetting />
         <DialogFooter>
           <Button>Give Feedback</Button>
         </DialogFooter>
