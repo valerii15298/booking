@@ -13,6 +13,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 
+import { IntervalSetting } from "./IntervalSetting";
+
 export function Settings() {
   const { dateItemHeight, setDateItemHeight } = useApp();
 
@@ -33,16 +35,19 @@ export function Settings() {
             Choose a preferred theme, zoom level, date range, and more.
           </DialogDescription>
         </DialogHeader>
-        <ModeToggle />
+        <div className="flex gap-5">
+          <ModeToggle />
+          <IntervalSetting />
+        </div>
         <Label>Block Height</Label>
         <Slider
           value={[dateItemHeight]}
           onValueChange={([newValue]) => {
             if (newValue) setDateItemHeight(newValue);
           }}
-          min={1}
+          min={25}
           step={1}
-          max={200}
+          max={100}
         />
         <DialogFooter>
           <Button>Give Feedback</Button>

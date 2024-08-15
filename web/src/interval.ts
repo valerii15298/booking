@@ -9,3 +9,6 @@ const DAY = (24 * HOUR) as Interval;
 const WEEK = (7 * DAY) as Interval;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Interval = { SECOND, MINUTE, HOUR, DAY, WEEK } as const;
+export const IntervalMap = Object.entries(Interval).reduce<
+  Record<Interval, string>
+>((acc, [key, value]) => ({ ...acc, [value]: key }), {});
