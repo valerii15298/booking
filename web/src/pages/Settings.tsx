@@ -21,10 +21,15 @@ export function Settings() {
     setDateItemHeight,
     minDateItemHeight,
     maxDateItemHeight,
+    preload,
   } = useApp();
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (open) preload();
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           variant={"secondary"}
