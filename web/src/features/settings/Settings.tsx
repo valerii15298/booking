@@ -12,6 +12,7 @@ import {
 import { useApp } from "@/features/app/useApp";
 
 import { DateItemHeightSetting } from "./DateItemHeightSetting";
+import { GoToCurrentDateSetting } from "./GoToCurrentDateSetting";
 import { IntervalSetting } from "./IntervalSetting";
 import { JumpToDateSetting } from "./JumpToDateSetting";
 
@@ -43,9 +44,7 @@ export function Settings() {
         <div className="flex gap-5">
           <ModeToggle />
           <IntervalSetting />
-          <Button className="flex-1" variant={"secondary"}>
-            Go To Current Date
-          </Button>
+          <GoToCurrentDateSetting />
         </div>
         <JumpToDateSetting />
 
