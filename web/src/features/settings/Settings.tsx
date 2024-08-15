@@ -1,4 +1,3 @@
-import { formatDateTime } from "@/atoms/dates";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,12 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useApp } from "@/features/app/useApp";
 
 import { DateItemHeightSetting } from "./DateItemHeightSetting";
 import { IntervalSetting } from "./IntervalSetting";
+import { JumpToDateSetting } from "./JumpToDateSetting";
 
 export function Settings() {
   const { preload } = useApp();
@@ -49,18 +47,7 @@ export function Settings() {
             Go To Current Date
           </Button>
         </div>
-        <Label className="flex items-center justify-between">
-          Jump To Date
-          <Input
-            type="datetime-local"
-            className="w-fit"
-            defaultValue={formatDateTime(new Date())}
-            onChange={(e) => {
-              // eslint-disable-next-line no-console
-              console.log(new Date(e.target.value));
-            }}
-          />
-        </Label>
+        <JumpToDateSetting />
 
         <DateItemHeightSetting />
         <DialogFooter>
