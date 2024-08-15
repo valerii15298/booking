@@ -1,3 +1,4 @@
+import { useApp } from "@/app/useApp";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 export function Settings() {
+  const { dateItemHeight, setDateItemHeight } = useApp();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,6 +34,16 @@ export function Settings() {
           </DialogDescription>
         </DialogHeader>
         <ModeToggle />
+        <Label>Block Height</Label>
+        <Slider
+          value={[dateItemHeight]}
+          onValueChange={([newValue]) => {
+            if (newValue) setDateItemHeight(newValue);
+          }}
+          min={1}
+          step={1}
+          max={200}
+        />
         <DialogFooter>
           <Button>Give Feedback</Button>
         </DialogFooter>
