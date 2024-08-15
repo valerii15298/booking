@@ -27,18 +27,24 @@ export const Route = createFileRoute("/")({
 
 const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
 const PRELOAD_COUNT = 100;
+const DEFAULT_DATE_ITEM_HEIGHT = 50;
 function Index() {
   const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();
   const date = rawDate ? new Date(dateToISO(rawDate)).getTime() : Date.now();
 
-  const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
-  const [dateItemHeight, setDateItemHeight] = useState(50);
-  const maxDateItemHeight = Math.floor(window.innerHeight);
+  const maxDateItemHeight = Math.floor(window.innerHeight / 3);
   const minDateItemHeight = Math.max(
-    Math.ceil(window.innerHeight / (PRELOAD_COUNT * 2)),
+    Math.ceil(window.innerHeight / PRELOAD_COUNT),
     20,
   );
+  const [dateItemHeight, setDateItemHeight] = useState(
+    Math.max(
+      minDateItemHeight,
+      Math.min(DEFAULT_DATE_ITEM_HEIGHT, maxDateItemHeight),
+    ),
+  );
+  const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
 
   const getStartDateFor = useCallback(
     (ts: number) =>
