@@ -1,12 +1,12 @@
 import { Fragment } from "react";
 
-import { useApp } from "@/app/useApp";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useApp } from "@/features/app/useApp";
 import { trpc } from "@/trpc";
 
 import { Booking } from "./Booking";

@@ -1,4 +1,3 @@
-import { useApp } from "@/app/useApp";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useApp } from "@/features/app/useApp";
 
 import { DateItemHeightSetting } from "./DateItemHeightSetting";
 import { IntervalSetting } from "./IntervalSetting";

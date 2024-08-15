@@ -1,6 +1,6 @@
-import { useApp } from "@/app/useApp";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { useApp } from "@/features/app/useApp";
 
 export function DateItemHeightSetting() {
   const {

@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { app } from "@/app/app";
 import {
   dateFromISO,
   dateSchema,
@@ -11,6 +10,7 @@ import {
   roundDate,
 } from "@/atoms/dates";
 import { Interval } from "@/atoms/interval";
+import { app } from "@/features/app/app";
 import { AssetsBookings } from "@/features/Bookings";
 
 const validateSearch = z.object({

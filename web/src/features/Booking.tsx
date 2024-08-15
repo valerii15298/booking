@@ -3,13 +3,13 @@ import { useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
-import { useApp } from "@/app/useApp";
 import {
   Tooltip,
   TooltipContent,
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useApp } from "@/features/app/useApp";
 import { trpc } from "@/trpc";
 import type { Types } from "@/zod";
 
