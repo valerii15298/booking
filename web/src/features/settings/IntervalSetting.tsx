@@ -14,7 +14,7 @@ export function IntervalSetting() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="capitalize" variant={"secondary"}>
+        <Button className="flex-1 capitalize" variant={"secondary"}>
           By {IntervalMap[dateDelimiter]?.toLowerCase()}
         </Button>
       </DropdownMenuTrigger>
