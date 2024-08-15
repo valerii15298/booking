@@ -26,30 +26,28 @@ export const Route = createFileRoute("/")({
 });
 
 const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
+const PRELOAD_COUNT = 100;
 function Index() {
   const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();
   const date = rawDate ? new Date(dateToISO(rawDate)).getTime() : Date.now();
 
-  const [dateItemHeight, setDateItemHeight] = useState(50);
-  const minItemsCount = Math.ceil(window.outerHeight / dateItemHeight);
-  const [preloadCount, setPreloadCount] = useState(100);
   const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
-
-  const getStartDateFor = useCallback(
-    (ts: number) => roundDate(ts - preloadCount * dateDelimiter, dateDelimiter),
-    [dateDelimiter, preloadCount],
+  const [dateItemHeight, setDateItemHeight] = useState(50);
+  const maxDateItemHeight = Math.floor(window.innerHeight);
+  const minDateItemHeight = Math.max(
+    Math.ceil(window.innerHeight / (PRELOAD_COUNT * 2)),
+    20,
   );
 
-  if (preloadCount < minItemsCount) {
-    // TODO refactor
-    throw new Error(
-      `preloadCount should be greater than or equal to ${minItemsCount}`,
-    );
-  }
+  const getStartDateFor = useCallback(
+    (ts: number) =>
+      roundDate(ts - PRELOAD_COUNT * dateDelimiter, dateDelimiter),
+    [dateDelimiter],
+  );
 
   const startDate = getStartDateFor(date);
-  const endDate = startDate + 2 * preloadCount * dateDelimiter;
+  const endDate = startDate + 2 * PRELOAD_COUNT * dateDelimiter;
 
   const dates = getDates(startDate, endDate, dateDelimiter);
 
@@ -103,9 +101,9 @@ function Index() {
         dateToY,
         yToDate,
         scrollableContainerRef,
-        preloadCount,
-        setPreloadCount,
         dateItemHeight,
+        maxDateItemHeight,
+        minDateItemHeight,
         setDateItemHeight,
         dateDelimiter,
         setDateDelimiter,

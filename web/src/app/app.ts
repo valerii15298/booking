@@ -6,13 +6,14 @@ import type { UseState } from "@/lib/types";
 export type App = {
   dateDelimiter: Interval;
   dateItemHeight: number;
+  maxDateItemHeight: number;
+  minDateItemHeight: number;
   dateToY: (ts: number) => number;
   yToDate: (y: number) => number;
   dates: number[];
   scrollableContainerRef: React.RefObject<HTMLElement>;
   preload: () => void;
-} & UseState<number, "preloadCount"> &
-  UseState<number, "dateItemHeight"> &
+} & UseState<number, "dateItemHeight"> &
   UseState<Interval, "dateDelimiter">;
 
 export const app = createContext<App | null>(null);

@@ -16,7 +16,12 @@ import { Slider } from "@/components/ui/slider";
 import { IntervalSetting } from "./IntervalSetting";
 
 export function Settings() {
-  const { dateItemHeight, setDateItemHeight } = useApp();
+  const {
+    dateItemHeight,
+    setDateItemHeight,
+    minDateItemHeight,
+    maxDateItemHeight,
+  } = useApp();
 
   return (
     <Dialog>
@@ -45,9 +50,9 @@ export function Settings() {
           onValueChange={([newValue]) => {
             if (newValue) setDateItemHeight(newValue);
           }}
-          min={25}
+          min={minDateItemHeight}
           step={1}
-          max={100}
+          max={maxDateItemHeight}
         />
         <DialogFooter>
           <Button>Give Feedback</Button>
