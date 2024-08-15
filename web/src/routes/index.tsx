@@ -11,7 +11,7 @@ import {
   roundDate,
 } from "@/atoms/dates";
 import { Interval } from "@/atoms/interval";
-import { AssetsBookings } from "@/pages/Bookings";
+import { AssetsBookings } from "@/features/Bookings";
 
 const validateSearch = z.object({
   date: dateSchema.optional().catch(undefined),
