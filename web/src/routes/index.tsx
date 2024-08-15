@@ -31,27 +31,25 @@ function Index() {
   const { date: rawDate } = Route.useSearch();
   const date = rawDate ? new Date(dateToISO(rawDate)).getTime() : Date.now();
 
-  const [maxItemsCount, setMaxItemsCount] = useState(100);
   const [dateItemHeight, setDateItemHeight] = useState(50);
+  const minItemsCount = Math.ceil(window.outerHeight / dateItemHeight);
+  const [preloadCount, setPreloadCount] = useState(100);
   const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
 
   const getStartDateFor = useCallback(
-    (ts: number) =>
-      roundDate(ts - maxItemsCount * dateDelimiter, dateDelimiter),
-    [dateDelimiter, maxItemsCount],
+    (ts: number) => roundDate(ts - preloadCount * dateDelimiter, dateDelimiter),
+    [dateDelimiter, preloadCount],
   );
 
-  const minItemsCount = 2 * Math.ceil(window.outerHeight / dateItemHeight);
-
-  if (maxItemsCount < minItemsCount) {
+  if (preloadCount < minItemsCount) {
     // TODO refactor
     throw new Error(
-      `maxItemsCount should be greater than or equal to ${minItemsCount}`,
+      `preloadCount should be greater than or equal to ${minItemsCount}`,
     );
   }
 
   const startDate = getStartDateFor(date);
-  const endDate = startDate + 2 * maxItemsCount * dateDelimiter;
+  const endDate = startDate + 2 * preloadCount * dateDelimiter;
 
   const dates = getDates(startDate, endDate, dateDelimiter);
 
@@ -105,8 +103,8 @@ function Index() {
         dateToY,
         yToDate,
         scrollableContainerRef,
-        maxItemsCount,
-        setMaxItemsCount,
+        preloadCount,
+        setPreloadCount,
         dateItemHeight,
         setDateItemHeight,
         dateDelimiter,
