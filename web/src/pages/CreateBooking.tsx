@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form, FormField } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { dateFromISO } from "@/dates";
 import { trpc } from "@/trpc";
 import { type Types, zod } from "@/zod";
@@ -95,7 +96,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
               control={form.control}
               name="from"
               render={({ field }) => (
-                <input
+                <Input
                   type="datetime-local"
                   className="w-min"
                   {...field}
@@ -111,7 +112,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
               control={form.control}
               name="to"
               render={({ field }) => (
-                <input
+                <Input
                   type="datetime-local"
                   className="w-min"
                   {...field}
