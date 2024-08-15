@@ -1,4 +1,5 @@
 import { useApp } from "@/app/useApp";
+import { Interval, IntervalMap } from "@/atoms/interval";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Interval, IntervalMap } from "@/interval";
 
 export function IntervalSetting() {
   const { dateDelimiter, setDateDelimiter } = useApp();

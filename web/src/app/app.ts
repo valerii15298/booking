@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-import type { Interval } from "@/interval";
+import type { Interval } from "@/atoms/interval";
 import type { UseState } from "@/lib/types";
 
 export type App = {

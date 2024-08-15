@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { Interval } from "@/interval";
+import type { Interval } from "@/atoms/interval";
 
 export function dateFromISO(str: string) {
   return str.split(".")[0]!.replaceAll(":", "-");

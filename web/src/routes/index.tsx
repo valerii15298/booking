@@ -9,8 +9,8 @@ import {
   dateToISO,
   getDates,
   roundDate,
-} from "@/dates";
-import { Interval } from "@/interval";
+} from "@/atoms/dates";
+import { Interval } from "@/atoms/interval";
 import { AssetsBookings } from "@/pages/Bookings";
 
 const validateSearch = z.object({

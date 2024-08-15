@@ -5,9 +5,9 @@ import { createTRPCQueryUtils } from "@trpc/react-query";
 import { useState } from "react";
 import transformer from "superjson";
 
+import { loading } from "./atoms/loading";
 import { ThemeProvider } from "./components/theme/theme-provider";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { loading } from "./loading";
 import { routeTree } from "./routeTree.gen";
 import { trpc } from "./trpc";
 
