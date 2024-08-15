@@ -1,4 +1,5 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
+import compression from "compression";
 import express from "express";
 import path from "path";
 
@@ -8,9 +9,8 @@ import { appRouter } from "./trpc.js";
 
 function main() {
   const app = express();
-
+  app.use(compression());
   app.use(express.static("public"));
-
   app.use((req, _res, next) => {
     // eslint-disable-next-line no-console
     console.log("⬅️ ", req.method, req.path, req.body, req.query);
