@@ -11,11 +11,6 @@ function main() {
   const app = express();
   app.use(compression());
   app.use(express.static("public"));
-  app.use((req, _res, next) => {
-    // eslint-disable-next-line no-console
-    console.log("⬅️ ", req.method, req.path, req.body, req.query);
-    next();
-  });
 
   app.use(
     "/trpc",
@@ -31,7 +26,7 @@ function main() {
 
   app.listen(env.PORT, () => {
     // eslint-disable-next-line no-console
-    console.log(`api listening on port ${env.PORT}`);
+    console.log(`\napi listening on 0.0.0.0:${env.PORT}`);
   });
 }
 
