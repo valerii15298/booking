@@ -19,4 +19,4 @@ ENV NODE_ENV=production
 RUN pnpm -r build
 RUN mv web/dist api/public
 
-CMD pnpm db:migrate && cd /home/node/app/api && node dist/main.js
+CMD cd /home/node/app/api && node dist/main.js
