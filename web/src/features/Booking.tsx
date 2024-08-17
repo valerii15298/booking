@@ -69,10 +69,12 @@ export function Booking(b: Types.Booking) {
           onClick={() => {
             setTooltipOpen(true);
           }}
-          className="h-full w-full"
+          className="grid h-full w-full place-items-center"
         >
-          {update.isPending && (
-            <CubeIcon className={`m-auto h-[50%] w-[50%] animate-spin`} />
+          {update.isPending ? (
+            <CubeIcon className={`h-[50%] w-[50%] animate-spin`} />
+          ) : (
+            b.id
           )}
         </TooltipTrigger>
         <TooltipPortal>
