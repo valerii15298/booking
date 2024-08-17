@@ -53,7 +53,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
       <DialogContent className="w-fit max-w-full overflow-x-auto">
         <DialogHeader>
           <DialogTitle>Create Booking</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-balance">
             Book <b>{name}</b> for a specific date and time
           </DialogDescription>
         </DialogHeader>
@@ -82,7 +82,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
               render={({ field }) => (
                 <Input
                   type="datetime-local"
-                  className="w-min"
+                  className="w-fit"
                   {...field}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
@@ -97,8 +97,8 @@ export function CreateBooking({ id, name }: Types.Asset) {
               name="to"
               render={({ field }) => (
                 <Input
+                  className="w-fit"
                   type="datetime-local"
-                  className="w-min"
                   {...field}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
