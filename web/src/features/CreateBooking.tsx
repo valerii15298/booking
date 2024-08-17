@@ -50,7 +50,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
           {name}
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-fit max-w-full overflow-x-auto">
+      <DialogContent className="w-fit">
         <DialogHeader>
           <DialogTitle>Create Booking</DialogTitle>
           <DialogDescription className="text-balance">
