@@ -10,6 +10,7 @@ export const bookings = pgCore.pgTable("bookings", {
   id: pgCore.integer("id").primaryKey().generatedAlwaysAsIdentity(),
   from: pgCore.timestamp("from").notNull(),
   to: pgCore.timestamp("to").notNull(),
+  updatedAt: pgCore.timestamp("updatedAt").notNull().defaultNow(),
   assetId: pgCore
     .integer("assetId")
     .notNull()

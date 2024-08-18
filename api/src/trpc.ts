@@ -48,7 +48,15 @@ export const appRouter = t.router({
     update: t.procedure
       .input(zod.booking)
       .mutation(({ input: { id, ...b }, ctx: { db } }) =>
-        db.update(s.bookings).set(b).where(d.eq(s.bookings.id, id)),
+        db
+          .update(s.bookings)
+          .set(b)
+          .where(
+            d.and(
+              d.eq(s.bookings.id, id),
+              d.lt(s.bookings.updatedAt, b.updatedAt),
+            ),
+          ),
       ),
 
     delete: t.procedure

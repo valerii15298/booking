@@ -23,7 +23,7 @@ const enableResizing: ResizeEnable = {
   bottomLeft: false,
   topLeft: false,
 };
-export function Booking(b: Types.Booking) {
+export function Booking(booking: Types.Booking) {
   const utils = trpc.useUtils();
   const update = trpc.bookings.update.useMutation({
     async onSuccess() {
@@ -33,7 +33,9 @@ export function Booking(b: Types.Booking) {
   const { dateToY, yToDate } = useApp();
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
-  const { from, to } = update.isPending ? update.variables : b;
+  const [isResizing, setIsResizing] = useState(false);
+
+  const b = update.isPending ? update.variables : booking;
 
   return (
     <Rnd
@@ -42,25 +44,33 @@ export function Booking(b: Types.Booking) {
       enableResizing={enableResizing}
       size={{
         width: "100%",
-        height: dateToY(to.getTime()) - dateToY(from.getTime()),
+        height: dateToY(b.to.getTime()) - dateToY(b.from.getTime()),
       }}
+      dragAxis="y"
       position={{
         x: 0,
-        y: dateToY(from.getTime()),
+        y: dateToY(b.from.getTime()),
       }}
       onDragStop={(_, { y }) => {
+        if (isResizing) return;
         update.mutate({
           ...b,
           from: new Date(yToDate(y)),
           to: new Date(yToDate(y) + (b.to.getTime() - b.from.getTime())),
+          updatedAt: new Date(),
         });
+      }}
+      onResizeStart={() => {
+        setIsResizing(true);
       }}
       // eslint-disable-next-line @typescript-eslint/max-params
       onResizeStop={(_e, _direction, ref, _delta, position) => {
+        setIsResizing(false);
         update.mutate({
           ...b,
           from: new Date(yToDate(position.y)),
           to: new Date(yToDate(position.y + ref.clientHeight)),
+          updatedAt: new Date(),
         });
       }}
     >
@@ -79,9 +89,9 @@ export function Booking(b: Types.Booking) {
         </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent>
-            {from.toLocaleString()}
+            {b.from.toLocaleString()}
             <br />
-            {to.toLocaleString()}
+            {b.to.toLocaleString()}
           </TooltipContent>
         </TooltipPortal>
       </Tooltip>

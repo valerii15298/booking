@@ -8,6 +8,13 @@
       "when": 1723409052599,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1723994436212,
+      "tag": "0001_booking_add_updated_at",
+      "breakpoints": true
     }
   ]
 }
