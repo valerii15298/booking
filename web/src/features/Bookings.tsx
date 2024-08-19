@@ -1,16 +1,9 @@
-import { Fragment } from "react";
-
 import { Button } from "@/components/ui/button";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { useApp } from "@/features/app/useApp";
 import { trpc } from "@/trpc";
 
-import { Booking } from "./Booking";
-import { CreateBooking } from "./CreateBooking";
+import { Asset } from "./Asset";
 import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
@@ -61,23 +54,7 @@ export function AssetsBookings() {
           </ResizablePanel>
 
           {assets.map((a) => (
-            <Fragment key={a.id}>
-              <ResizableHandle />
-              <ResizablePanel
-                className="flex flex-col"
-                style={{ overflow: "visible" }}
-              >
-                <CreateBooking {...a} />
-                <section
-                  key={a.id}
-                  className="relative flex-1 overflow-y-hidden"
-                >
-                  {a.bookings.map((b) => (
-                    <Booking key={b.id} {...b} />
-                  ))}
-                </section>
-              </ResizablePanel>
-            </Fragment>
+            <Asset {...a} key={a.id} />
           ))}
         </ResizablePanelGroup>
         <Button
