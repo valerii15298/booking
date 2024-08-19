@@ -1,4 +1,3 @@
-import { CubeIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
@@ -79,13 +78,11 @@ export function Booking(booking: Types.Booking) {
           onClick={() => {
             setTooltipOpen(true);
           }}
-          className="grid h-full w-full place-items-center"
+          className="grid h-full w-full place-items-center overflow-hidden"
         >
-          {update.isPending ? (
-            <CubeIcon className={`h-[50%] w-[50%] animate-spin`} />
-          ) : (
-            b.id
-          )}
+          {b.id} {b.from.toLocaleString()}
+          {" -> "}
+          {b.to.toLocaleString()}
         </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent>
