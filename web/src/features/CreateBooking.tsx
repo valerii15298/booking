@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { trpc } from "@/trpc";
 import { type Types, zod } from "@/zod";
 
+import { useApp } from "./app/useApp";
+
 const routeApi = getRouteApi("/");
 export function CreateBooking({ id, name }: Types.Asset) {
   const [open, setOpen] = useState(false);
@@ -33,10 +35,11 @@ export function CreateBooking({ id, name }: Types.Asset) {
       return utils.assets.list.invalidate();
     },
   });
+  const { dateDelimiter } = useApp();
   const form = useForm({
     defaultValues: {
       from: new Date(),
-      to: new Date(),
+      to: new Date(new Date().getTime() + dateDelimiter),
       assetId: id,
     },
     disabled: createBooking.isPending,
@@ -82,6 +85,7 @@ export function CreateBooking({ id, name }: Types.Asset) {
                   type="datetime-local"
                   className="w-fit"
                   {...field}
+                  max={formatDateTime(new Date(form.watch("to").getTime() - 1))}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
                     field.onChange(new Date(e.target.value));
@@ -98,6 +102,9 @@ export function CreateBooking({ id, name }: Types.Asset) {
                   className="w-fit"
                   type="datetime-local"
                   {...field}
+                  min={formatDateTime(
+                    new Date(form.watch("from").getTime() + 1),
+                  )}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
                     field.onChange(new Date(e.target.value));
