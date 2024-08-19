@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { httpBatchLink } from "@trpc/client";
+import { createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
 import { createTRPCQueryUtils } from "@trpc/react-query";
 import { useState } from "react";
 import transformer from "superjson";
@@ -18,12 +18,21 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+const url = "/trpc";
 
 export function App() {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      links: [httpBatchLink({ url: "/trpc", transformer })],
+      links: [
+        splitLink({
+          condition(op) {
+            return op.type === "subscription";
+          },
+          true: wsLink({ client: createWSClient({ url }), transformer }),
+          false: httpBatchLink({ url, transformer }),
+        }),
+      ],
     }),
   );
   const [utils] = useState(() =>

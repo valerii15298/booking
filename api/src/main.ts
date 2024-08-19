@@ -1,5 +1,6 @@
 import fastifyCompress from "@fastify/compress";
 import fastifyStatic from "@fastify/static";
+import ws from "@fastify/websocket";
 import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import fastify from "fastify";
@@ -11,10 +12,13 @@ import type { AppRouter } from "./trpc.js";
 import { appRouter } from "./trpc.js";
 
 function main() {
-  const server = fastify({ logger: true });
+  const server = fastify({ logger: false });
+
+  server.register(ws);
 
   server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
+    useWSS: true,
     trpcOptions: {
       router: appRouter,
       createContext,

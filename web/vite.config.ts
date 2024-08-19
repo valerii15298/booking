@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   const env = { ...process.env, ...loadEnv(mode, "..") },
     proxyOptions = {
       changeOrigin: false,
+      ws: true,
       target: `http://localhost:${env["VITE_API_PORT"]}`,
     };
   return {
