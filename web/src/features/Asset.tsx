@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import type { Types } from "@/zod";
 
@@ -8,7 +6,7 @@ import { CreateBooking } from "./CreateBooking";
 
 export function Asset(a: Types.Asset & { bookings: Types.Booking[] }) {
   return (
-    <Fragment key={a.id}>
+    <>
       <ResizableHandle />
       <ResizablePanel className="flex flex-col" style={{ overflow: "visible" }}>
         <CreateBooking {...a} />
@@ -18,6 +16,6 @@ export function Asset(a: Types.Asset & { bookings: Types.Booking[] }) {
           ))}
         </section>
       </ResizablePanel>
-    </Fragment>
+    </>
   );
 }
