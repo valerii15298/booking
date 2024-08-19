@@ -1,11 +1,11 @@
-import type * as trpcExpress from "@trpc/server/adapters/express";
+import type * as trpcExpress from "@trpc/server/adapters/fastify";
 
 import { db } from "./db.js";
 
 export function createContext({
   req,
   res,
-}: trpcExpress.CreateExpressContextOptions) {
+}: trpcExpress.CreateFastifyContextOptions) {
   return {
     db,
     req,

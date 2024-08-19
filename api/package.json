@@ -8,21 +8,20 @@
     "ts:check": "tsc --noEmit"
   },
   "dependencies": {
+    "@fastify/compress": "^7.0.3",
+    "@fastify/static": "^7.0.4",
     "@trpc/server": "11.0.0-rc.477",
-    "compression": "^1.7.4",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
-    "express": "^4.19.2",
+    "fastify": "^4.28.1",
     "http-status-codes": "^2.3.0",
     "postgres": "^3.4.4",
     "superjson": "^2.2.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/compression": "^1.7.5",
-    "@types/express": "^4.17.21",
     "@types/node": "^22.4.1",
     "drizzle-kit": "^0.24.0",
     "tsx": "^4.17.0"
