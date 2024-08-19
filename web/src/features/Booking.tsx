@@ -23,12 +23,7 @@ const enableResizing: ResizeEnable = {
   topLeft: false,
 };
 export function Booking(booking: Types.Booking) {
-  const utils = trpc.useUtils();
-  const update = trpc.bookings.update.useMutation({
-    async onSuccess() {
-      return utils.assets.list.invalidate();
-    },
-  });
+  const update = trpc.bookings.update.useMutation();
   const { dateToY, yToDate } = useApp();
   const [tooltipOpen, setTooltipOpen] = useState(false);
 

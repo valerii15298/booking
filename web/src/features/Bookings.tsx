@@ -17,6 +17,18 @@ export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
 
   const { dates, dateItemHeight, scrollableContainerRef, preload } = useApp();
+  const utils = trpc.useUtils();
+  trpc.bookings.updated.useSubscription(undefined, {
+    onData(data) {
+      utils.assets.list.setData(undefined, (prev) => {
+        if (!prev) return prev;
+        return prev.map((a) => ({
+          ...a,
+          bookings: a.bookings.map((b) => (b.id === data.id ? data : b)),
+        }));
+      });
+    },
+  });
 
   return (
     <main

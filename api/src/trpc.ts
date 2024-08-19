@@ -1,8 +1,10 @@
 import { initTRPC } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
 import superjson from "superjson";
 
 import type { Context } from "./context.js";
 import { d, s } from "./db.js";
+import type { Types } from "./zod.js";
 import { zInt, zod } from "./zod.js";
 
 const t = initTRPC.context<Context>().create({
@@ -47,8 +49,8 @@ export const appRouter = t.router({
 
     update: t.procedure
       .input(zod.booking)
-      .mutation(({ input: { id, ...b }, ctx: { db } }) =>
-        db
+      .mutation(async ({ input: { id, ...b }, ctx: { db, updateBooking } }) => {
+        await db
           .update(s.bookings)
           .set(b)
           .where(
@@ -56,8 +58,20 @@ export const appRouter = t.router({
               d.eq(s.bookings.id, id),
               d.lt(s.bookings.updatedAt, b.updatedAt),
             ),
-          ),
-      ),
+          );
+        updateBooking.forEach((emit) => {
+          emit.next({ ...b, id });
+        });
+      }),
+
+    updated: t.procedure.subscription(({ ctx }) =>
+      observable<Types.Booking>((emit) => {
+        ctx.updateBooking.push(emit);
+        return () => {
+          ctx.updateBooking.splice(ctx.updateBooking.indexOf(emit), 1);
+        };
+      }),
+    ),
 
     delete: t.procedure
       .input(zInt)
