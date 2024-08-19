@@ -25,7 +25,11 @@ export function CreateBooking({ id, name }: Types.Asset) {
   const utils = trpc.useUtils();
   const navigate = routeApi.useNavigate();
   const createBooking = trpc.bookings.create.useMutation({
-    async onSuccess() {
+    async onSuccess(_, { from }) {
+      setOpen(false);
+      void navigate({
+        search: { date: dateFromISO(from.toISOString()) },
+      });
       return utils.assets.list.invalidate();
     },
   });
@@ -62,15 +66,9 @@ export function CreateBooking({ id, name }: Types.Asset) {
             id={formId}
             onSubmit={(e) => {
               void form.handleSubmit((data, e) => {
-                setOpen(false);
                 e?.preventDefault();
 
-                // TODO go back to current position in case of an error and setOpen back to true(test with disabled network)
-                void navigate({
-                  search: { date: dateFromISO(data.from.toISOString()) },
-                });
-
-                void createBooking.mutateAsync(data);
+                createBooking.mutate(data);
               })(e);
             }}
             className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between"
