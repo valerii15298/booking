@@ -75,6 +75,17 @@ function Index() {
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
 
   const prevDateRef = useRef(date);
+  useEffect(() => {
+    if (!scrollableContainerRef.current) return;
+    const scrollableContainer = scrollableContainerRef.current;
+    function onScroll() {
+      prevDateRef.current = yToDate(scrollableContainer.scrollTop);
+    }
+    scrollableContainer.addEventListener("scroll", onScroll);
+    return () => {
+      scrollableContainer.removeEventListener("scroll", onScroll);
+    };
+  }, [yToDate]);
 
   const scrollBehaviorRef = useRef<ScrollBehavior>(DEFAULT_SCROLL_BEHAVIOR);
   useEffect(() => {
