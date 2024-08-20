@@ -43,8 +43,12 @@ export const appRouter = t.router({
     // CRUD
     create: t.procedure
       .input(zod.bookingInput)
-      .mutation(({ input, ctx: { db } }) =>
-        db.insert(s.bookings).values(input),
+      .mutation(async ({ input, ctx: { db } }) =>
+        db
+          .insert(s.bookings)
+          .values(input)
+          .returning()
+          .then((r) => r[0]!),
       ),
 
     update: t.procedure

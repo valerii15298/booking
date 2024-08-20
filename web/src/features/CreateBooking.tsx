@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getRouteApi } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useId } from "react";
 import { useForm } from "react-hook-form";
 
 import { dateFromISO, formatDateTime } from "@/atoms/dates";
@@ -16,30 +16,49 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import type { UseState } from "@/lib/types";
 import { trpc } from "@/trpc";
 import { type Types, zod } from "@/zod";
 
 import { useApp } from "./app/useApp";
 
+const currDate = new Date();
+
 const routeApi = getRouteApi("/");
-export function CreateBooking({ id, name }: Types.Asset) {
-  const [open, setOpen] = useState(false);
-  const utils = trpc.useUtils();
+export function CreateBooking({
+  id,
+  name,
+  initialDate,
+  setInitialDate,
+}: Types.Asset & UseState<Date | null, "initialDate">) {
+  const { dateDelimiter, scrollableContainerRef, yToDate } = useApp();
   const navigate = routeApi.useNavigate();
+
+  const open = Boolean(initialDate);
+  const from = initialDate ?? currDate;
+
+  const utils = trpc.useUtils();
   const createBooking = trpc.bookings.create.useMutation({
-    async onSuccess(_, { from }) {
-      setOpen(false);
+    async onSuccess(_, { from, to }) {
+      if (!scrollableContainerRef.current) return;
+      setInitialDate(null);
+      const diff = to.getTime() - from.getTime();
+      const middle = from.getTime() + diff / 2;
+      // scrollHeight + clientHeight/2 = middleHeightDate
+      const clientHeightInterval =
+        yToDate(scrollableContainerRef.current.clientHeight) - yToDate(0);
+      const date = middle - clientHeightInterval / 2;
       void navigate({
-        search: { date: dateFromISO(from.toISOString()) },
+        search: { date: dateFromISO(new Date(date).toISOString()) },
       });
       return utils.assets.list.invalidate();
     },
   });
-  const { dateDelimiter } = useApp();
+
   const form = useForm({
-    defaultValues: {
-      from: new Date(),
-      to: new Date(new Date().getTime() + dateDelimiter),
+    values: {
+      from,
+      to: new Date(from.getTime() + dateDelimiter),
       assetId: id,
     },
     disabled: createBooking.isPending,
@@ -48,7 +67,13 @@ export function CreateBooking({ id, name }: Types.Asset) {
 
   const formId = useId();
   return (
-    <Dialog open={open} onOpenChange={setOpen} key={id}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        setInitialDate(open ? currDate : null);
+      }}
+      key={id}
+    >
       <DialogTrigger asChild>
         <Button
           variant={"ghost"}
