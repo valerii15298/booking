@@ -6,9 +6,26 @@ import { Asset } from "./Asset";
 import { LoadPreviousNextButtons } from "./LoadPreviousNextButtons";
 import { Settings } from "./settings/Settings";
 
+function DateItem({ date }: { date: Date }) {
+  const { dateItemHeight } = useApp();
+  const hours = date.getHours();
+  const isBreakpoint = hours === 0;
+  const breakpointDate = date.toLocaleDateString();
+  const minutes = date.getMinutes();
+  return (
+    <li
+      className={`mr-2 flex justify-end bg-background ${isBreakpoint ? "sticky top-9" : ""}`}
+      style={{ height: dateItemHeight }}
+    >
+      {isBreakpoint
+        ? breakpointDate
+        : `${hours}:${minutes.toString().padStart(2, "0")}`}
+    </li>
+  );
+}
+
 export function AssetsBookings() {
-  const { dates, dateItemHeight, scrollableContainerRef, startDate, endDate } =
-    useApp();
+  const { dates, scrollableContainerRef, startDate, endDate } = useApp();
   function betweenStartAndEnd(date: Date) {
     return date.getTime() >= startDate && date.getTime() <= endDate;
   }
@@ -53,10 +70,8 @@ export function AssetsBookings() {
           >
             <Settings />
             <ul className="bg-background">
-              {dates.map((item) => (
-                <li style={{ height: dateItemHeight }} key={item}>
-                  {new Date(item).toLocaleString()}
-                </li>
+              {dates.map((date) => (
+                <DateItem date={new Date(date)} />
               ))}
             </ul>
           </ResizablePanel>
