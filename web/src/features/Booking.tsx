@@ -29,15 +29,11 @@ export function Booking({
   tabIndex,
   ...booking
 }: Types.Booking & { tabIndex: number }) {
-  const utils = trpc.useUtils();
-  const update = trpc.bookings.update.useMutation({
-    async onSettled() {
-      return utils.assets.list.invalidate();
-    },
-  });
+  const update = trpc.bookings.update.useMutation();
   const { dateToY, yToDate } = useApp();
 
   const [isResizing, setIsResizing] = useState(false);
+  const [_isDragging, setIsDragging] = useState(false);
   const ref = useRef<HTMLButtonElement | null>(null);
   const { focusBookingId } = routeApi.useSearch();
 
@@ -69,18 +65,12 @@ export function Booking({
         x: 0,
         y: dateToY(b.from.getTime()),
       }}
-      onDrag={(_, { y }) => {
-        const { from, to } = getDragDates(y);
-        utils.assets.list.setData(undefined, (prev) =>
-          prev?.map((a) => ({
-            ...a,
-            bookings: a.bookings.map((b) =>
-              b.id === booking.id ? { ...b, from, to } : b,
-            ),
-          })),
-        );
+      onDragStart={() => {
+        setIsDragging(true);
       }}
       onDragStop={(_, { y }) => {
+        // need to rerender component to prevent flickering after drag stop
+        setIsDragging(false);
         if (isResizing) return;
         const { from, to } = getDragDates(y);
         update.mutate({ ...b, from, to, updatedAt: new Date() });
