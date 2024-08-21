@@ -16,8 +16,8 @@ function DateItem({ date }: { date: Date }) {
 
   return (
     <li
-      className={`flex items-end justify-end border-b bg-background px-2 ${isBreakpoint ? "sticky top-2.5" : ""}`}
-      style={{ height: dateItemHeight }}
+      className={`flex items-end justify-end border-b bg-background px-2 ${isBreakpoint ? "sticky" : ""}`}
+      style={{ height: dateItemHeight, top: 62 - dateItemHeight }}
     >
       {isBreakpoint && (
         <b>
