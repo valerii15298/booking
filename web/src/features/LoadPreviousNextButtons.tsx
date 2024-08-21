@@ -1,32 +1,26 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
 import { useApp } from "./app/useApp";
 
+const SHIFT = 100;
 export function LoadPreviousNextButtons() {
   const { scrollableContainerRef, preload } = useApp();
 
-  const loadNextRef = useRef<HTMLButtonElement>(null);
-  const loadPreviousRef = useRef<HTMLButtonElement>(null);
+  const [previousVisible, setPreviousVisible] = useState(false);
+  const [nextVisible, setNextVisible] = useState(false);
 
   useEffect(() => {
     const container = scrollableContainerRef.current;
-    const loadNext = loadNextRef.current;
-    const loadPrevious = loadPreviousRef.current;
     if (!container) return;
     function onScroll() {
-      if (!container || !loadNext || !loadPrevious) return;
-      const previousNotVisible =
-        container.scrollTop > loadPrevious.clientHeight;
-      const nextNotVisible =
-        container.scrollTop + container.clientHeight <
-        container.scrollHeight - loadNext.clientHeight;
-      if (previousNotVisible && nextNotVisible) return;
-
-      const left = `${container.scrollLeft + container.clientWidth / 2}px`;
-      loadPrevious.style.left = left;
-      loadNext.style.left = left;
+      if (!container) return;
+      setPreviousVisible(container.scrollTop < SHIFT);
+      setNextVisible(
+        container.scrollTop + container.clientHeight >
+          container.scrollHeight - SHIFT,
+      );
     }
     container.addEventListener("scroll", onScroll);
     return () => {
@@ -34,24 +28,15 @@ export function LoadPreviousNextButtons() {
     };
   }, [scrollableContainerRef]);
 
+  if (!previousVisible && !nextVisible) return null;
+
   return (
-    <>
-      <Button
-        ref={loadPreviousRef}
-        variant={"outline"}
-        className="absolute left-1/2 top-2 z-20 translate-x-1/2"
-        onClick={preload}
-      >
-        Load Previous
-      </Button>
-      <Button
-        ref={loadNextRef}
-        variant={"outline"}
-        className="absolute bottom-2 left-[50%] z-20 translate-x-[-50%]"
-        onClick={preload}
-      >
-        Load Next
-      </Button>
-    </>
+    <Button
+      variant={"outline"}
+      className={`fixed left-1/2 z-20 -translate-x-1/2 ${previousVisible ? "top-1" : ""} ${nextVisible ? "bottom-1" : ""}`}
+      onClick={preload}
+    >
+      Load More
+    </Button>
   );
 }

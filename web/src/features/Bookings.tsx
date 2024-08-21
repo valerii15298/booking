@@ -28,8 +28,8 @@ export function AssetsBookings() {
       ref={scrollableContainerRef}
       className="h-full overflow-y-auto hide-scrollbar"
     >
+      <LoadPreviousNextButtons />
       <div className="relative w-fit">
-        <LoadPreviousNextButtons />
         <ResizablePanelGroup
           direction="horizontal"
           style={{ overflow: "visible" }}
