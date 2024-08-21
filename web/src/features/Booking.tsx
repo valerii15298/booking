@@ -100,7 +100,7 @@ export function Booking({
           {b.to.toLocaleString()}
         </TooltipTrigger>
         <TooltipPortal>
-          <TooltipContent>
+          <TooltipContent side="left">
             {b.from.toLocaleString()}
             <br />
             {b.to.toLocaleString()}
