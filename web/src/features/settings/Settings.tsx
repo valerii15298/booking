@@ -1,3 +1,5 @@
+import { GearIcon } from "@radix-ui/react-icons";
+
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,10 +29,10 @@ export function Settings() {
     >
       <DialogTrigger asChild>
         <Button
-          variant={"secondary"}
-          className="sticky top-0 z-10 w-full rounded-none"
+          variant={"outline"}
+          className="sticky top-0 z-10 w-full rounded-none p-0"
         >
-          Settings
+          <GearIcon className="h-full w-1/3" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
