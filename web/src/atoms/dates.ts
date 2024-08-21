@@ -36,8 +36,8 @@ export function getDates(
   const dates = [];
   let currentDate = startDate;
   while (currentDate < endDate) {
-    dates.push(currentDate);
     currentDate += dateDelimiter;
+    dates.push(currentDate);
   }
   return dates;
 }

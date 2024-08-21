@@ -28,7 +28,7 @@ export function Settings() {
       <DialogTrigger asChild>
         <Button
           variant={"secondary"}
-          className="sticky top-0 w-full rounded-none"
+          className="sticky top-0 z-10 w-full rounded-none"
         >
           Settings
         </Button>

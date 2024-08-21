@@ -8,18 +8,27 @@ import { Settings } from "./settings/Settings";
 
 function DateItem({ date }: { date: Date }) {
   const { dateItemHeight } = useApp();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
   const hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
   const isBreakpoint = hours === 0;
-  const breakpointDate = date.toLocaleDateString();
-  const minutes = date.getMinutes();
+
   return (
     <li
-      className={`mr-2 flex justify-end bg-background ${isBreakpoint ? "sticky top-9" : ""}`}
+      className={`flex items-end justify-end border-b bg-background px-2 ${isBreakpoint ? "sticky top-2.5" : ""}`}
       style={{ height: dateItemHeight }}
     >
-      {isBreakpoint
-        ? breakpointDate
-        : `${hours}:${minutes.toString().padStart(2, "0")}`}
+      {isBreakpoint && (
+        <b>
+          {day}/{month}
+        </b>
+      )}
+      {!isBreakpoint && (
+        <>
+          {hours}:{minutes}
+        </>
+      )}
     </li>
   );
 }
@@ -71,7 +80,7 @@ export function AssetsBookings() {
             <Settings />
             <ul className="bg-background">
               {dates.map((date) => (
-                <DateItem date={new Date(date)} />
+                <DateItem key={date} date={new Date(date)} />
               ))}
             </ul>
           </ResizablePanel>
