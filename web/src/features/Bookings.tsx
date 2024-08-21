@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { useApp } from "@/features/app/useApp";
 import { trpc } from "@/trpc";
 
 import { Asset } from "./Asset";
+import { LoadPreviousNextButtons } from "./LoadPreviousNextButtons";
 import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
   const [assets] = trpc.assets.list.useSuspenseQuery();
-
-  const { dates, dateItemHeight, scrollableContainerRef, preload } = useApp();
+  const { dates, dateItemHeight, scrollableContainerRef } = useApp();
   const utils = trpc.useUtils();
+
   trpc.bookings.updated.useSubscription(undefined, {
     onData(data) {
       utils.assets.list.setData(undefined, (prev) => {
@@ -29,13 +29,7 @@ export function AssetsBookings() {
       className="h-full overflow-y-auto hide-scrollbar"
     >
       <div className="relative w-fit">
-        <Button
-          variant={"outline"}
-          className="absolute left-1/2 top-2 z-20 translate-x-1/2"
-          onClick={preload}
-        >
-          Load Previous
-        </Button>
+        <LoadPreviousNextButtons />
         <ResizablePanelGroup
           direction="horizontal"
           style={{ overflow: "visible" }}
@@ -56,13 +50,6 @@ export function AssetsBookings() {
             <Asset {...a} key={a.id} />
           ))}
         </ResizablePanelGroup>
-        <Button
-          variant={"outline"}
-          className="absolute bottom-2 left-[50%] z-20 translate-x-[-50%]"
-          onClick={preload}
-        >
-          Load Next
-        </Button>
       </div>
     </main>
   );
