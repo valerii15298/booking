@@ -52,7 +52,7 @@ export function AssetsBookings() {
             style={{ overflow: "visible" }}
           >
             <Settings />
-            <ul>
+            <ul className="bg-background">
               {dates.map((item) => (
                 <li style={{ height: dateItemHeight }} key={item}>
                   {new Date(item).toLocaleString()}
