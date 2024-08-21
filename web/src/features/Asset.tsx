@@ -25,8 +25,8 @@ export function Asset(a: Types.Asset & { bookings: Types.Booking[] }) {
         >
           {a.bookings
             .toSorted((a, b) => a.from.getTime() - b.from.getTime())
-            .map((b, i) => (
-              <Booking key={b.id} {...b} tabIndex={i + 1} />
+            .map((b) => (
+              <Booking key={b.id} {...b} tabIndex={a.id + 1} />
             ))}
         </section>
       </ResizablePanel>
