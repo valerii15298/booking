@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { getRouteApi } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -22,12 +23,25 @@ const enableResizing: ResizeEnable = {
   bottomLeft: false,
   topLeft: false,
 };
-export function Booking(booking: Types.Booking) {
+
+const routeApi = getRouteApi("/");
+export function Booking({
+  tabIndex,
+  ...booking
+}: Types.Booking & { tabIndex: number }) {
   const update = trpc.bookings.update.useMutation();
   const { dateToY, yToDate } = useApp();
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const [isResizing, setIsResizing] = useState(false);
+  const ref = useRef<HTMLButtonElement | null>(null);
+  const { focusBookingId } = routeApi.useSearch();
+
+  useEffect(() => {
+    if (booking.id === focusBookingId) {
+      ref.current?.focus();
+    }
+  }, [booking.id, focusBookingId]);
 
   const b = update.isPending ? update.variables : booking;
 
@@ -70,10 +84,12 @@ export function Booking(booking: Types.Booking) {
     >
       <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
         <TooltipTrigger
+          tabIndex={tabIndex}
+          ref={ref}
           onClick={() => {
             setTooltipOpen(true);
           }}
-          className="grid h-full w-full place-items-center overflow-hidden"
+          className="grid h-full w-full place-items-center overflow-hidden focus:outline focus:outline-1 focus-visible:outline-foreground"
         >
           {b.id} {b.from.toLocaleString()}
           {" -> "}

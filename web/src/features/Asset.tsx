@@ -23,9 +23,11 @@ export function Asset(a: Types.Asset & { bookings: Types.Booking[] }) {
               setInitialDate(new Date(yToDate(e.nativeEvent.offsetY)));
           }}
         >
-          {a.bookings.map((b) => (
-            <Booking key={b.id} {...b} />
-          ))}
+          {a.bookings
+            .toSorted((a, b) => a.from.getTime() - b.from.getTime())
+            .map((b, i) => (
+              <Booking key={b.id} {...b} tabIndex={i + 1} />
+            ))}
         </section>
       </ResizablePanel>
     </>

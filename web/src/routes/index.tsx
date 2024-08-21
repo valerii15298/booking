@@ -15,7 +15,7 @@ import { AssetsBookings } from "@/features/Bookings";
 
 const validateSearch = z.object({
   date: dateSchema.optional().catch(undefined),
-  selectedBookingId: z.number().optional().catch(undefined),
+  focusBookingId: z.number().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/")({
