@@ -31,7 +31,6 @@ export function Booking({
 }: Types.Booking & { tabIndex: number }) {
   const update = trpc.bookings.update.useMutation();
   const { dateToY, yToDate } = useApp();
-  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const [isResizing, setIsResizing] = useState(false);
   const ref = useRef<HTMLButtonElement | null>(null);
@@ -82,13 +81,10 @@ export function Booking({
         });
       }}
     >
-      <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+      <Tooltip>
         <TooltipTrigger
           tabIndex={tabIndex}
           ref={ref}
-          onClick={() => {
-            setTooltipOpen(true);
-          }}
           className="grid h-full w-full place-items-center overflow-hidden focus:outline focus:outline-1 focus-visible:outline-foreground"
         >
           {b.id} {b.from.toLocaleString()}
