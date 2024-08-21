@@ -7,8 +7,21 @@ import { LoadPreviousNextButtons } from "./LoadPreviousNextButtons";
 import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
-  const [assets] = trpc.assets.list.useSuspenseQuery();
-  const { dates, dateItemHeight, scrollableContainerRef } = useApp();
+  const { dates, dateItemHeight, scrollableContainerRef, startDate, endDate } =
+    useApp();
+  function betweenStartAndEnd(date: Date) {
+    return date.getTime() >= startDate && date.getTime() <= endDate;
+  }
+  const [assets] = trpc.assets.list.useSuspenseQuery(undefined, {
+    select(assets) {
+      return assets.map((a) => ({
+        ...a,
+        bookings: a.bookings.filter(
+          (b) => betweenStartAndEnd(b.from) || betweenStartAndEnd(b.to),
+        ),
+      }));
+    },
+  });
   const utils = trpc.useUtils();
 
   trpc.bookings.updated.useSubscription(undefined, {

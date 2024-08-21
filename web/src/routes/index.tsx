@@ -114,6 +114,8 @@ function Index() {
   return (
     <app.Provider
       value={{
+        startDate,
+        endDate,
         dates,
         dateToY,
         yToDate,

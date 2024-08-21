@@ -10,6 +10,8 @@ export type App = {
   minDateItemHeight: number;
   dateToY: (ts: number) => number;
   yToDate: (y: number) => number;
+  startDate: number;
+  endDate: number;
   dates: number[];
   scrollableContainerRef: React.RefObject<HTMLElement>;
   preload: () => void;
