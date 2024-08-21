@@ -34,9 +34,11 @@ export function AssetsBookings() {
           direction="horizontal"
           style={{ overflow: "visible" }}
         >
-          <ResizablePanel style={{ overflow: "visible" }}>
+          <ResizablePanel
+            className="sticky left-0 z-20"
+            style={{ overflow: "visible" }}
+          >
             <Settings />
-
             <ul>
               {dates.map((item) => (
                 <li style={{ height: dateItemHeight }} key={item}>
