@@ -28,10 +28,10 @@ export function AssetsBookings() {
       ref={scrollableContainerRef}
       className="h-full overflow-y-auto hide-scrollbar"
     >
-      <div className="relative">
+      <div className="relative w-fit">
         <Button
           variant={"outline"}
-          className="absolute left-[50%] top-2 z-20 translate-x-[-50%]"
+          className="absolute left-1/2 top-2 z-20 translate-x-1/2"
           onClick={preload}
         >
           Load Previous
