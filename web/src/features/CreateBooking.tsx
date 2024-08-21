@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getRouteApi } from "@tanstack/react-router";
-import { useId } from "react";
+import { useId, useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import { dateFromISO, formatDateTime } from "@/atoms/dates";
@@ -31,13 +31,15 @@ export function CreateBooking({
   initialDate,
   setInitialDate,
 }: Types.Asset & UseState<Date | null, "initialDate">) {
-  const { dateDelimiter, scrollableContainerRef, yToDate } = useApp();
-  const navigate = routeApi.useNavigate();
-
   const open = Boolean(initialDate);
   const from = initialDate ?? currDate;
 
+  const { dateDelimiter, scrollableContainerRef, yToDate } = useApp();
+  const navigate = routeApi.useNavigate();
+  const ref = useRef<HTMLDivElement | null>(null);
   const utils = trpc.useUtils();
+  const formId = useId();
+
   const createBooking = trpc.bookings.create.useMutation({
     async onSuccess(_, { from, to }) {
       if (!scrollableContainerRef.current) return;
@@ -48,9 +50,21 @@ export function CreateBooking({
       const clientHeightInterval =
         yToDate(scrollableContainerRef.current.clientHeight) - yToDate(0);
       const date = middle - clientHeightInterval / 2;
-      void navigate({
-        search: { date: dateFromISO(new Date(date).toISOString()) },
-      });
+
+      // to prevent focus issues navigate only after dialog close animation ended
+      ref.current?.addEventListener(
+        "animationend",
+        () =>
+          setTimeout(
+            () =>
+              void navigate({
+                search: {
+                  date: dateFromISO(new Date(date).toISOString()),
+                },
+              }),
+          ),
+        { once: true },
+      );
       return utils.assets.list.invalidate();
     },
   });
@@ -65,7 +79,6 @@ export function CreateBooking({
     resolver: zodResolver(zod.bookingInput),
   });
 
-  const formId = useId();
   return (
     <Dialog
       open={open}
@@ -82,7 +95,7 @@ export function CreateBooking({
           {name}
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-fit">
+      <DialogContent ref={ref} className="w-fit">
         <DialogHeader>
           <DialogTitle>Create Booking</DialogTitle>
           <DialogDescription className="text-balance">
@@ -95,7 +108,6 @@ export function CreateBooking({
             onSubmit={(e) => {
               void form.handleSubmit((data, e) => {
                 e?.preventDefault();
-
                 createBooking.mutate(data);
               })(e);
             }}
