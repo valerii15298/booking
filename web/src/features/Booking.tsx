@@ -49,6 +49,11 @@ export function Booking({
 
   const b = update.isPending ? update.variables : booking;
 
+  function getDragDates(y: number) {
+    const from = new Date(yToDate(y));
+    const to = new Date(yToDate(y) + (b.to.getTime() - b.from.getTime()));
+    return { from, to };
+  }
   return (
     <Rnd
       key={b.id}
@@ -64,14 +69,21 @@ export function Booking({
         x: 0,
         y: dateToY(b.from.getTime()),
       }}
+      onDrag={(_, { y }) => {
+        const { from, to } = getDragDates(y);
+        utils.assets.list.setData(undefined, (prev) =>
+          prev?.map((a) => ({
+            ...a,
+            bookings: a.bookings.map((b) =>
+              b.id === booking.id ? { ...b, from, to } : b,
+            ),
+          })),
+        );
+      }}
       onDragStop={(_, { y }) => {
         if (isResizing) return;
-        update.mutate({
-          ...b,
-          from: new Date(yToDate(y)),
-          to: new Date(yToDate(y) + (b.to.getTime() - b.from.getTime())),
-          updatedAt: new Date(),
-        });
+        const { from, to } = getDragDates(y);
+        update.mutate({ ...b, from, to, updatedAt: new Date() });
       }}
       onResizeStart={() => {
         setIsResizing(true);

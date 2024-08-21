@@ -37,7 +37,6 @@ export function AssetsBookings() {
           Load Previous
         </Button>
         <ResizablePanelGroup
-          tagName="header"
           direction="horizontal"
           style={{ overflow: "visible" }}
         >
