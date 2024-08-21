@@ -12,7 +12,7 @@ import type { AppRouter } from "./trpc.js";
 import { appRouter } from "./trpc.js";
 
 function main() {
-  const server = fastify({ logger: false });
+  const server = fastify();
 
   server.register(ws);
 
