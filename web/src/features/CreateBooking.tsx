@@ -41,7 +41,7 @@ export function CreateBooking({
   const formId = useId();
 
   const createBooking = trpc.bookings.create.useMutation({
-    async onSuccess({ id }, { from, to }) {
+    onSuccess({ id }, { from, to }) {
       if (!scrollableContainerRef.current) return;
       setInitialDate(null);
       const diff = to.getTime() - from.getTime();
@@ -66,6 +66,8 @@ export function CreateBooking({
           ),
         { once: true },
       );
+    },
+    async onSettled() {
       return utils.assets.list.invalidate();
     },
   });

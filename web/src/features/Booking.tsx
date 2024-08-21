@@ -29,7 +29,12 @@ export function Booking({
   tabIndex,
   ...booking
 }: Types.Booking & { tabIndex: number }) {
-  const update = trpc.bookings.update.useMutation();
+  const utils = trpc.useUtils();
+  const update = trpc.bookings.update.useMutation({
+    async onSettled() {
+      return utils.assets.list.invalidate();
+    },
+  });
   const { dateToY, yToDate } = useApp();
 
   const [isResizing, setIsResizing] = useState(false);
@@ -46,6 +51,7 @@ export function Booking({
 
   return (
     <Rnd
+      key={b.id}
       className="bg-indigo-400 dark:bg-indigo-800"
       bounds="parent"
       enableResizing={enableResizing}
