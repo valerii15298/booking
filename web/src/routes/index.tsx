@@ -10,6 +10,7 @@ import {
   roundDate,
 } from "@/atoms/dates";
 import { Interval } from "@/atoms/interval";
+import type { MenuPosition } from "@/features/app/app";
 import { app } from "@/features/app/app";
 import { AssetsBookings } from "@/features/Bookings";
 
@@ -28,7 +29,11 @@ export const Route = createFileRoute("/")({
 const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
 const PRELOAD_COUNT = 100;
 const DEFAULT_DATE_ITEM_HEIGHT = 50;
+const isMobile = /iPhone|iPad|iPod|Android/iu.test(navigator.userAgent);
 function Index() {
+  const [menuPosition, setMenuPosition] = useState<MenuPosition>(
+    isMobile ? "bottom" : "top",
+  );
   const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();
   const date = rawDate ? new Date(dateToISO(rawDate)).getTime() : Date.now();
@@ -127,6 +132,8 @@ function Index() {
         dateDelimiter,
         setDateDelimiter,
         preload,
+        menuPosition,
+        setMenuPosition,
       }}
     >
       <AssetsBookings />

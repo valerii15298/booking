@@ -7,17 +7,19 @@ import { LoadPreviousNextButtons } from "./LoadPreviousNextButtons";
 import { Settings } from "./settings/Settings";
 
 function DateItem({ date }: { date: Date }) {
-  const { dateItemHeight } = useApp();
+  const { dateItemHeight, menuPosition } = useApp();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
   const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");
   const isBreakpoint = hours === 0;
 
+  const top =
+    menuPosition === "top" ? 56 - dateItemHeight : 20 - dateItemHeight;
   return (
     <li
       className={`flex items-end justify-end border-b bg-background px-2 ${isBreakpoint ? "sticky" : ""}`}
-      style={{ height: dateItemHeight, top: 62 - dateItemHeight }}
+      style={{ height: dateItemHeight, top }}
     >
       {isBreakpoint && (
         <b>
@@ -34,7 +36,8 @@ function DateItem({ date }: { date: Date }) {
 }
 
 export function AssetsBookings() {
-  const { dates, scrollableContainerRef, startDate, endDate } = useApp();
+  const { dates, scrollableContainerRef, startDate, endDate, menuPosition } =
+    useApp();
   function betweenStartAndEnd(date: Date) {
     return date.getTime() >= startDate && date.getTime() <= endDate;
   }
@@ -77,12 +80,13 @@ export function AssetsBookings() {
             className="sticky left-0 z-20"
             style={{ overflow: "visible" }}
           >
-            <Settings />
+            {menuPosition === "top" && <Settings />}
             <ul className="bg-background">
               {dates.map((date) => (
                 <DateItem key={date} date={new Date(date)} />
               ))}
             </ul>
+            {menuPosition === "bottom" && <Settings />}
           </ResizablePanel>
 
           {assets.map((a) => (

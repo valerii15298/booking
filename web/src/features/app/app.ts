@@ -3,6 +3,7 @@ import { createContext } from "react";
 import type { Interval } from "@/atoms/interval";
 import type { UseState } from "@/lib/types";
 
+export type MenuPosition = "top" | "bottom";
 export type App = {
   dateDelimiter: Interval;
   dateItemHeight: number;
@@ -16,6 +17,7 @@ export type App = {
   scrollableContainerRef: React.RefObject<HTMLElement>;
   preload: () => void;
 } & UseState<number, "dateItemHeight"> &
+  UseState<MenuPosition, "menuPosition"> &
   UseState<Interval, "dateDelimiter">;
 
 export const app = createContext<App | null>(null);

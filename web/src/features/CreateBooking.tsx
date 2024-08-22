@@ -34,7 +34,8 @@ export function CreateBooking({
   const open = Boolean(initialDate);
   const from = initialDate ?? currDate;
 
-  const { dateDelimiter, scrollableContainerRef, yToDate } = useApp();
+  const { dateDelimiter, scrollableContainerRef, yToDate, menuPosition } =
+    useApp();
   const navigate = routeApi.useNavigate();
   const ref = useRef<HTMLDivElement | null>(null);
   const utils = trpc.useUtils();
@@ -93,7 +94,7 @@ export function CreateBooking({
       <DialogTrigger asChild>
         <Button
           variant={"ghost"}
-          className="sticky top-0 z-10 w-full rounded-none"
+          className={`sticky z-10 w-full rounded-none ${menuPosition === "top" ? "top-0" : "bottom-0"}`}
         >
           {name}
         </Button>

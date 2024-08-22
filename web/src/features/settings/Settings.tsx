@@ -19,7 +19,7 @@ import { IntervalSetting } from "./IntervalSetting";
 import { JumpToDateSetting } from "./JumpToDateSetting";
 
 export function Settings() {
-  const { preload } = useApp();
+  const { preload, menuPosition } = useApp();
 
   return (
     <Dialog
@@ -30,7 +30,7 @@ export function Settings() {
       <DialogTrigger asChild>
         <Button
           variant={"outline"}
-          className="sticky top-0 z-10 w-full rounded-none p-0"
+          className={`sticky z-10 w-full rounded-none p-0 ${menuPosition === "top" ? "top-0" : "bottom-0"}`}
         >
           <GearIcon className="h-full w-1/3" />
         </Button>
