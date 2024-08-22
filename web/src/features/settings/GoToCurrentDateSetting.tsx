@@ -3,11 +3,14 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
 const routeApi = getRouteApi("/");
-export function GoToCurrentDateSetting() {
+export function GoToCurrentDateSetting({ onGo }: { onGo?: () => void }) {
   const navigate = routeApi.useNavigate();
   return (
     <Button
-      onClick={() => void navigate({ search: {} })}
+      onClick={() => {
+        onGo?.();
+        void navigate({ search: {} });
+      }}
       className="flex-1"
       variant={"secondary"}
     >

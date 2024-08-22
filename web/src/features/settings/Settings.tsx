@@ -1,4 +1,5 @@
 import { GearIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -20,10 +21,13 @@ import { JumpToDateSetting } from "./JumpToDateSetting";
 
 export function Settings() {
   const { preload, menuPosition } = useApp();
+  const [open, setOpen] = useState(false);
 
   return (
     <Dialog
+      open={open}
       onOpenChange={(open) => {
+        setOpen(open);
         if (open) preload();
       }}
     >
@@ -46,7 +50,11 @@ export function Settings() {
         <div className="flex gap-5">
           <ModeToggle />
           <IntervalSetting />
-          <GoToCurrentDateSetting />
+          <GoToCurrentDateSetting
+            onGo={() => {
+              setOpen(false);
+            }}
+          />
         </div>
         <JumpToDateSetting />
 
