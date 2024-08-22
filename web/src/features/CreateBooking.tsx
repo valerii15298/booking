@@ -93,7 +93,7 @@ export function CreateBooking({
     >
       <DialogTrigger asChild>
         <Button
-          variant={"ghost"}
+          variant={"outline"}
           className={`sticky z-10 w-full rounded-none ${menuPosition === "top" ? "top-0" : "bottom-0"}`}
         >
           {name}
