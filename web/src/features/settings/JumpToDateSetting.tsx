@@ -11,7 +11,7 @@ export function JumpToDateSetting() {
   const date = dateRaw ? new Date(dateToISO(dateRaw)) : new Date();
   return (
     <Label className="flex items-center justify-between">
-      Jump To Date
+      Jump To Another Date:
       <Input
         type="datetime-local"
         className="w-fit"

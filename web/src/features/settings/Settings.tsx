@@ -47,7 +47,7 @@ export function Settings() {
             and more
           </DialogDescription>
         </DialogHeader>
-        <div className="flex gap-5">
+        <div className="flex justify-around gap-5">
           <ModeToggle />
           <IntervalSetting />
           <GoToCurrentDateSetting
