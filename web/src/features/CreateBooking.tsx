@@ -99,7 +99,7 @@ export function CreateBooking({
           {name}
         </Button>
       </DialogTrigger>
-      <DialogContent ref={ref} className="w-fit">
+      <DialogContent ref={ref} className="w-fit max-w-fit">
         <DialogHeader>
           <DialogTitle>Create Booking</DialogTitle>
           <DialogDescription className="text-balance">
@@ -123,6 +123,8 @@ export function CreateBooking({
               name="from"
               render={({ field }) => (
                 <Input
+                  // TODO calculate step based on dateDelimiter
+                  step={0.001}
                   type="datetime-local"
                   className="w-fit"
                   {...field}
@@ -140,8 +142,10 @@ export function CreateBooking({
               name="to"
               render={({ field }) => (
                 <Input
-                  className="w-fit"
+                  // TODO calculate step based on dateDelimiter
+                  step={0.001}
                   type="datetime-local"
+                  className="w-fit"
                   {...field}
                   min={formatDateTime(
                     new Date(form.watch("from").getTime() + 1),
