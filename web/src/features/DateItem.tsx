@@ -41,8 +41,12 @@ export function DateItem({
         </li>
       </TooltipTrigger>
       <TooltipPortal>
-        <TooltipContent side="right">
-          {dateLocal}, {<br />} {timeLocal}
+        <TooltipContent
+          style={{ height: dateItemHeight }}
+          className="grid place-items-center py-0"
+          side="right"
+        >
+          {dateLocal}, {dateItemHeight > 35 ? <br /> : null} {timeLocal}
         </TooltipContent>
       </TooltipPortal>
     </Tooltip>
