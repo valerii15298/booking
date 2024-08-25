@@ -49,31 +49,31 @@ function Index() {
       Math.min(DEFAULT_DATE_ITEM_HEIGHT, maxDateItemHeight),
     ),
   );
-  const [dateDelimiter, setDateDelimiter] = useState(Interval.HOUR);
+  const [dateDelimiter, setDateDelimiter] = useState<Interval>(Interval.Hour);
 
   const getStartDateFor = useCallback(
     (ts: number) =>
-      roundDate(ts - PRELOAD_COUNT * dateDelimiter, dateDelimiter),
+      roundDate(ts - PRELOAD_COUNT * dateDelimiter.value, dateDelimiter.value),
     [dateDelimiter],
   );
 
   const startDate = getStartDateFor(date);
-  const endDate = startDate + 2 * PRELOAD_COUNT * dateDelimiter;
+  const endDate = startDate + 2 * PRELOAD_COUNT * dateDelimiter.value;
 
-  const dates = getDates(startDate, endDate, dateDelimiter);
+  const dates = getDates(startDate, endDate, dateDelimiter.value);
 
   const dateToY = useCallback(
     (ts: number) =>
       // (date milliseconds diff) multiple by (pixels per millisecond ratio)
-      ((ts - startDate) * dateItemHeight) / dateDelimiter,
-    [dateDelimiter, dateItemHeight, startDate],
+      ((ts - startDate) * dateItemHeight) / dateDelimiter.value,
+    [dateDelimiter.value, dateItemHeight, startDate],
   );
 
   const yToDate = useCallback(
     (y: number) =>
       // startDate + milliseconds diff
       // startDate + ((pixels diff) multiple by (milliseconds per pixel ratio))
-      startDate + (y * dateDelimiter) / dateItemHeight,
+      startDate + (y * dateDelimiter.value) / dateItemHeight,
     [dateDelimiter, dateItemHeight, startDate],
   );
 

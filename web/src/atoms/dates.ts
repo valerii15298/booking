@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { Interval } from "@/atoms/interval";
+import type { IntervalBrand } from "@/atoms/interval";
 
 export function dateFromISO(str: string) {
   return str.split(".")[0]!.replaceAll(":", "-");
@@ -24,7 +24,7 @@ export const dateSchema = z.string().refine(
   },
 );
 
-export function roundDate(ts: number, interval: Interval) {
+export function roundDate(ts: number, interval: IntervalBrand) {
   return Math.round(ts / interval) * interval;
 }
 
@@ -60,4 +60,15 @@ export function formatDateTime(date: Date) {
   const milliseconds = String(date.getMilliseconds()).padStart(3, "0");
 
   return `${dateStr}T${hours}:${minutes}:${seconds}.${milliseconds}` as const;
+}
+
+export function dateInfoWithPaddings(date: Date) {
+  const year = date.getFullYear().toString();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+  return { year, month, day, hours, minutes, seconds, milliseconds };
 }

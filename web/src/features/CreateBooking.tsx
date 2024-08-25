@@ -76,7 +76,7 @@ export function CreateBooking({
   const form = useForm({
     values: {
       from,
-      to: new Date(from.getTime() + dateDelimiter),
+      to: new Date(from.getTime() + dateDelimiter.value),
       assetId: id,
     },
     disabled: createBooking.isPending,

@@ -1,4 +1,4 @@
-import { Interval, IntervalMap } from "@/atoms/interval";
+import { Interval } from "@/atoms/interval";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,8 +14,8 @@ export function IntervalSetting() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="flex-1 capitalize" variant={"secondary"}>
-          By {IntervalMap[dateDelimiter]?.toLowerCase()}
+        <Button className="flex-1" variant={"secondary"}>
+          By {dateDelimiter.label}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
