@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { roundDate } from "@/atoms/dates";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import type { Types } from "@/zod";
 
@@ -8,7 +9,7 @@ import { Booking } from "./Booking";
 import { CreateBooking } from "./CreateBooking";
 
 export function Asset(a: Types.Asset & { bookings: Types.Booking[] }) {
-  const { yToDate, menuPosition } = useApp();
+  const { yToDate, menuPosition, dateDelimiter } = useApp();
   const [initialDate, setInitialDate] = useState<Date | null>(null);
   return (
     <>
@@ -22,7 +23,14 @@ export function Asset(a: Types.Asset & { bookings: Types.Booking[] }) {
           className="relative flex-1 overflow-y-hidden"
           onDoubleClick={(e) => {
             if (e.target === e.currentTarget)
-              setInitialDate(new Date(yToDate(e.nativeEvent.offsetY)));
+              setInitialDate(
+                new Date(
+                  roundDate(
+                    yToDate(e.nativeEvent.offsetY),
+                    dateDelimiter.prev().value,
+                  ),
+                ),
+              );
           }}
         >
           {a.bookings

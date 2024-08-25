@@ -13,6 +13,8 @@ export type Interval = Readonly<{
   isBreakpoint: (date: Date) => boolean;
   breakpoint: (date: Date) => ReactNode;
   item: (date: Date) => ReactNode;
+
+  prev: () => Interval;
 }>;
 
 const Millisecond = {
@@ -36,6 +38,10 @@ const Millisecond = {
     const { seconds, milliseconds } = dateInfoWithPaddings(date);
     return `${seconds}.${milliseconds}`;
   },
+
+  prev() {
+    return this;
+  },
 } as const satisfies Interval;
 
 const Second = {
@@ -47,6 +53,10 @@ const Second = {
   item: (date) => {
     const { minutes, seconds } = dateInfoWithPaddings(date);
     return `${minutes}:${seconds}`;
+  },
+
+  prev() {
+    return Millisecond;
   },
 } as const satisfies Interval;
 
@@ -70,12 +80,19 @@ const Minute = {
     const { hours, minutes } = dateInfoWithPaddings(date);
     return `${hours}:${minutes}`;
   },
+
+  prev() {
+    return Second;
+  },
 } as const satisfies Interval;
 
 const Hour = {
   ...Minute,
   value: (Minute.value * 60) as IntervalBrand,
   label: "Hour",
+  prev() {
+    return Minute;
+  },
 } as const satisfies Interval;
 
 const Day = {
@@ -98,6 +115,10 @@ const Day = {
     const { month, day } = dateInfoWithPaddings(date);
     return `${month}/${day}`;
   },
+
+  prev() {
+    return Hour;
+  },
 } as const satisfies Interval;
 
 const Week = {
@@ -115,6 +136,10 @@ const Week = {
         <b>{year}</b>
       </>
     );
+  },
+
+  prev() {
+    return Day;
   },
 } as const satisfies Interval;
 

@@ -123,16 +123,20 @@ export function CreateBooking({
               name="from"
               render={({ field }) => (
                 <Input
-                  // TODO calculate step based on dateDelimiter
-                  step={0.001}
+                  step={Math.min(dateDelimiter.prev().value / 1000, 60)}
                   type="datetime-local"
                   className="w-fit"
                   {...field}
-                  max={formatDateTime(new Date(form.watch("to").getTime() - 1))}
+                  max={formatDateTime(
+                    new Date(
+                      form.watch("to").getTime() - dateDelimiter.prev().value,
+                    ),
+                  )}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
                     field.onChange(new Date(e.target.value));
                   }}
+                  required
                 />
               )}
             />
@@ -142,18 +146,20 @@ export function CreateBooking({
               name="to"
               render={({ field }) => (
                 <Input
-                  // TODO calculate step based on dateDelimiter
-                  step={0.001}
+                  step={Math.min(dateDelimiter.prev().value / 1000, 60)}
                   type="datetime-local"
                   className="w-fit"
                   {...field}
                   min={formatDateTime(
-                    new Date(form.watch("from").getTime() + 1),
+                    new Date(
+                      form.watch("from").getTime() + dateDelimiter.prev().value,
+                    ),
                   )}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
                     field.onChange(new Date(e.target.value));
                   }}
+                  required
                 />
               )}
             />
