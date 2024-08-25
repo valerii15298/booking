@@ -4,7 +4,7 @@ import { trpc } from "@/trpc";
 
 import { Asset } from "./Asset";
 import { DateItem } from "./DateItem";
-import { LoadPreviousNextButtons } from "./LoadPreviousNextButtons";
+import { LoadPreviousNextButtons } from "./LoadMoreButton";
 import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
