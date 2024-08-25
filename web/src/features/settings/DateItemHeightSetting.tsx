@@ -11,7 +11,7 @@ export function DateItemHeightSetting() {
   } = useApp();
   return (
     <>
-      <Label>Zoom Level</Label>
+      <Label>Zoom Level {dateItemHeight}</Label>
       <Slider
         value={[dateItemHeight]}
         onValueChange={([newValue]) => {
