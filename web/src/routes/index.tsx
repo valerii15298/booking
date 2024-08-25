@@ -29,6 +29,7 @@ export const Route = createFileRoute("/")({
 const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
 const PRELOAD_COUNT = 100;
 const DEFAULT_DATE_ITEM_HEIGHT = 50;
+const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
 const isMobile = /iPhone|iPad|iPod|Android/iu.test(navigator.userAgent);
 function Index() {
   const [menuPosition, setMenuPosition] = useState<MenuPosition>(
@@ -53,7 +54,8 @@ function Index() {
 
   const getStartDateFor = useCallback(
     (ts: number) =>
-      roundDate(ts - PRELOAD_COUNT * dateDelimiter.value, dateDelimiter.value),
+      roundDate(ts - PRELOAD_COUNT * dateDelimiter.value, dateDelimiter.value) +
+      tzOffset,
     [dateDelimiter],
   );
 

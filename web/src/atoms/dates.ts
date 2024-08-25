@@ -31,7 +31,7 @@ export function roundDate(ts: number, interval: IntervalBrand) {
 export function getDates(
   startDate: number,
   endDate: number,
-  dateDelimiter: number,
+  dateDelimiter: IntervalBrand,
 ) {
   const dates = [];
   let currentDate = startDate;
