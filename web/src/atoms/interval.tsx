@@ -9,6 +9,7 @@ export type IntervalBrand = number & z.BRAND<"Interval">;
 export type Interval = Readonly<{
   value: IntervalBrand;
   label: string;
+  inputType: "date" | "datetime-local";
 
   isBreakpoint: (date: Date) => boolean;
   breakpoint: (date: Date) => ReactNode;
@@ -20,6 +21,7 @@ export type Interval = Readonly<{
 const Millisecond = {
   value: 1 as IntervalBrand,
   label: "Millisecond",
+  inputType: "datetime-local",
 
   isBreakpoint: (date) =>
     date.getMilliseconds() === 0 && date.getSeconds() === 0,
@@ -61,6 +63,7 @@ const Second = {
 } as const satisfies Interval;
 
 const Minute = {
+  ...Second,
   value: (Second.value * 60) as IntervalBrand,
   label: "Minute",
 
@@ -98,6 +101,7 @@ const Hour = {
 const Day = {
   value: (Hour.value * 24) as IntervalBrand,
   label: "Day",
+  inputType: "date",
 
   isBreakpoint: (date) => date.getDate() === 1,
 
@@ -121,6 +125,7 @@ const Day = {
   },
 } as const satisfies Interval;
 
+/** Not a regular week, equivalent of 7 days */
 const Week = {
   ...Day,
   value: (Day.value * 7) as IntervalBrand,

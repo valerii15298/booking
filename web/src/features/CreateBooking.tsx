@@ -3,7 +3,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useId, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-import { dateFromISO, formatDateTime } from "@/atoms/dates";
+import { dateFromISO, formatDateTime, roundDate } from "@/atoms/dates";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,10 +32,14 @@ export function CreateBooking({
   setInitialDate,
 }: Types.Asset & UseState<Date | null, "initialDate">) {
   const open = Boolean(initialDate);
-  const from = initialDate ?? currDate;
+  const fromRaw = initialDate ?? currDate;
 
   const { dateDelimiter, scrollableContainerRef, yToDate, menuPosition } =
     useApp();
+  const from = new Date(
+    roundDate(fromRaw.getTime(), dateDelimiter.prev().value),
+  );
+
   const navigate = routeApi.useNavigate();
   const ref = useRef<HTMLDivElement | null>(null);
   const utils = trpc.useUtils();
@@ -123,8 +127,8 @@ export function CreateBooking({
               name="from"
               render={({ field }) => (
                 <Input
-                  step={Math.min(dateDelimiter.prev().value / 1000, 60)}
-                  type="datetime-local"
+                  step={dateDelimiter.prev().value / 1000}
+                  type={dateDelimiter.prev().inputType}
                   className="w-fit"
                   {...field}
                   max={formatDateTime(
@@ -134,7 +138,9 @@ export function CreateBooking({
                   )}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
-                    field.onChange(new Date(e.target.value));
+                    const ts = new Date(e.target.value).getTime();
+                    const roundedTs = roundDate(ts, dateDelimiter.prev().value);
+                    field.onChange(new Date(roundedTs));
                   }}
                   required
                 />
@@ -146,8 +152,8 @@ export function CreateBooking({
               name="to"
               render={({ field }) => (
                 <Input
-                  step={Math.min(dateDelimiter.prev().value / 1000, 60)}
-                  type="datetime-local"
+                  step={dateDelimiter.prev().value / 1000}
+                  type={dateDelimiter.prev().inputType}
                   className="w-fit"
                   {...field}
                   min={formatDateTime(
@@ -157,7 +163,9 @@ export function CreateBooking({
                   )}
                   value={formatDateTime(field.value)}
                   onChange={(e) => {
-                    field.onChange(new Date(e.target.value));
+                    const ts = new Date(e.target.value).getTime();
+                    const roundedTs = roundDate(ts, dateDelimiter.prev().value);
+                    field.onChange(new Date(roundedTs));
                   }}
                   required
                 />

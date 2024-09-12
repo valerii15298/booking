@@ -72,3 +72,6 @@ export function dateInfoWithPaddings(date: Date) {
   const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
   return { year, month, day, hours, minutes, seconds, milliseconds };
 }
+
+/** when using days start of the day should be at 00:00:00.000 */
+export const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
