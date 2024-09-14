@@ -4,7 +4,6 @@ import { trpc } from "@/trpc";
 
 import { Asset } from "./Asset";
 import { DateItem } from "./DateItem";
-import { LoadPreviousNextButtons } from "./LoadMoreButton";
 import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
@@ -42,7 +41,7 @@ export function AssetsBookings() {
       ref={scrollableContainerRef}
       className="h-full overflow-y-auto hide-scrollbar"
     >
-      <LoadPreviousNextButtons />
+      {/** place for overflowing fixed content */}
       <div className="relative w-fit">
         <ResizablePanelGroup
           direction="horizontal"
