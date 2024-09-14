@@ -20,17 +20,11 @@ import { IntervalSetting } from "./IntervalSetting";
 import { JumpToDateSetting } from "./JumpToDateSetting";
 
 export function Settings() {
-  const { preload, menuPosition } = useApp();
+  const { menuPosition } = useApp();
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(open) => {
-        setOpen(open);
-        if (open) preload();
-      }}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant={"outline"}

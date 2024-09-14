@@ -20,6 +20,14 @@ const validateSearch = z.object({
   focusBookingId: z.number().optional().catch(undefined),
 });
 
+function isEdgeScroll(el: HTMLDivElement) {
+  const SHIFT = 100; // TODO calculate based on scrollableContainer height
+  return (
+    el.scrollTop < SHIFT ||
+    el.scrollTop + el.clientHeight > el.scrollHeight - SHIFT
+  );
+}
+
 export const Route = createFileRoute("/")({
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   component: Index,
@@ -76,7 +84,7 @@ function Index() {
       // startDate + milliseconds diff
       // startDate + ((pixels diff) multiple by (milliseconds per pixel ratio))
       startDate + (y * dateDelimiter.value) / dateItemHeight,
-    [dateDelimiter, dateItemHeight, startDate],
+    [dateDelimiter.value, dateItemHeight, startDate],
   );
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
@@ -94,18 +102,42 @@ function Index() {
   }, [navigate, yToDate]);
 
   const prevDateRef = useRef(date);
+  const ignoreScrollEventRef = useRef(false);
   useEffect(() => {
     if (!scrollableContainerRef.current) return;
     const scrollableContainer = scrollableContainerRef.current;
+
+    ignoreScrollEventRef.current = true;
+    scrollableContainer.scrollTo({
+      top: dateToY(prevDateRef.current),
+      behavior: "instant",
+    });
+    scrollableContainer.scrollTo({
+      top: dateToY(date),
+      behavior: scrollBehaviorRef.current,
+    });
+
+    function checkProgrammaticScrollEnd() {
+      if (!isEdgeScroll(scrollableContainer)) {
+        ignoreScrollEventRef.current = false;
+        scrollableContainer.removeEventListener(
+          "scroll",
+          checkProgrammaticScrollEnd,
+        );
+      }
+    }
+    scrollableContainer.addEventListener("scroll", checkProgrammaticScrollEnd);
+
+    scrollableContainer.style.overflow = "";
+    scrollBehaviorRef.current = DEFAULT_SCROLL_BEHAVIOR;
+    prevDateRef.current = date;
+
     function onScroll() {
+      if (ignoreScrollEventRef.current) return;
+
       prevDateRef.current = yToDate(scrollableContainer.scrollTop);
 
-      const SHIFT = 400; // TODO calculate based on scrollableContainer height
-      if (
-        scrollableContainer.scrollTop < SHIFT ||
-        scrollableContainer.scrollTop + scrollableContainer.clientHeight >
-          scrollableContainer.scrollHeight - SHIFT
-      ) {
+      if (isEdgeScroll(scrollableContainer)) {
         preload();
       }
     }
@@ -113,23 +145,7 @@ function Index() {
     return () => {
       scrollableContainer.removeEventListener("scroll", onScroll);
     };
-  }, [preload, yToDate]);
-
-  useEffect(() => {
-    if (!scrollableContainerRef.current) return;
-
-    scrollableContainerRef.current.scrollTo({
-      top: dateToY(prevDateRef.current),
-      behavior: "instant",
-    });
-    scrollableContainerRef.current.scrollTo({
-      top: dateToY(date),
-      behavior: scrollBehaviorRef.current,
-    });
-    scrollableContainerRef.current.style.overflow = "";
-    scrollBehaviorRef.current = DEFAULT_SCROLL_BEHAVIOR;
-    prevDateRef.current = date;
-  }, [date, dateToY]);
+  }, [date, dateToY, preload, yToDate]);
 
   return (
     <app.Provider
