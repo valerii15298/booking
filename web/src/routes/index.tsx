@@ -80,6 +80,18 @@ function Index() {
   );
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollBehaviorRef = useRef<ScrollBehavior>(DEFAULT_SCROLL_BEHAVIOR);
+  const preload = useCallback(() => {
+    if (!scrollableContainerRef.current) return;
+    if (isMobile) scrollableContainerRef.current.style.overflow = "hidden";
+
+    const currDate = yToDate(scrollableContainerRef.current.scrollTop);
+    scrollBehaviorRef.current = "instant";
+    // TODO return promise here
+    void navigate({
+      search: { date: dateFromISO(new Date(currDate).toISOString()) },
+    });
+  }, [navigate, yToDate]);
 
   const prevDateRef = useRef(date);
   useEffect(() => {
@@ -87,14 +99,22 @@ function Index() {
     const scrollableContainer = scrollableContainerRef.current;
     function onScroll() {
       prevDateRef.current = yToDate(scrollableContainer.scrollTop);
+
+      const SHIFT = 400; // TODO calculate based on scrollableContainer height
+      if (
+        scrollableContainer.scrollTop < SHIFT ||
+        scrollableContainer.scrollTop + scrollableContainer.clientHeight >
+          scrollableContainer.scrollHeight - SHIFT
+      ) {
+        preload();
+      }
     }
     scrollableContainer.addEventListener("scroll", onScroll);
     return () => {
       scrollableContainer.removeEventListener("scroll", onScroll);
     };
-  }, [yToDate]);
+  }, [preload, yToDate]);
 
-  const scrollBehaviorRef = useRef<ScrollBehavior>(DEFAULT_SCROLL_BEHAVIOR);
   useEffect(() => {
     if (!scrollableContainerRef.current) return;
 
@@ -106,18 +126,11 @@ function Index() {
       top: dateToY(date),
       behavior: scrollBehaviorRef.current,
     });
+    scrollableContainerRef.current.style.overflow = "";
     scrollBehaviorRef.current = DEFAULT_SCROLL_BEHAVIOR;
     prevDateRef.current = date;
   }, [date, dateToY]);
 
-  function preload() {
-    if (!scrollableContainerRef.current) return;
-    const currDate = yToDate(scrollableContainerRef.current.scrollTop);
-    scrollBehaviorRef.current = "instant";
-    void navigate({
-      search: { date: dateFromISO(new Date(currDate).toISOString()) },
-    });
-  }
   return (
     <app.Provider
       value={{
