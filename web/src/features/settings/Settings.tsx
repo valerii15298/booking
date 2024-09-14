@@ -1,5 +1,5 @@
 import { GearIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,14 @@ import { JumpToDateSetting } from "./JumpToDateSetting";
 export function Settings() {
   const { menuPosition } = useApp();
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  async function onAnimationEnd() {
+    return new Promise((resolve) => {
+      ref.current?.addEventListener("animationend", () => setTimeout(resolve), {
+        once: true,
+      });
+    });
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -33,7 +41,7 @@ export function Settings() {
           <GearIcon className="h-full w-1/3" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent ref={ref} className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
@@ -45,8 +53,9 @@ export function Settings() {
           <ModeToggle />
           <IntervalSetting />
           <GoToCurrentDateSetting
-            onGo={() => {
+            onGo={async () => {
               setOpen(false);
+              await onAnimationEnd();
             }}
           />
         </div>
