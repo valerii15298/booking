@@ -39,7 +39,7 @@ export function AssetsBookings() {
   return (
     <main
       ref={scrollableContainerRef}
-      className="h-full overflow-y-auto hide-scrollbar"
+      className="h-full overflow-y-auto overscroll-none hide-scrollbar"
     >
       {/** place for overflowing fixed content */}
       <div className="relative w-fit">
