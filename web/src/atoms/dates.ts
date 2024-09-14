@@ -1,10 +1,65 @@
 import { z } from "zod";
 
-import type { IntervalBrand } from "@/atoms/interval";
+import { Interval, type IntervalBrand } from "@/atoms/interval";
+
+/** when using days start of the day should be at 00:00:00.000 */
+export const tzOffset = new Date().getTimezoneOffset() * Interval.Minute.value;
+
+const tzOffsetSign = tzOffset <= 0 ? "+" : "-";
+const tzOffsetHours = Math.floor(Math.abs(tzOffset) / Interval.Hour.value);
+const tzOffsetMinutes =
+  (Math.abs(tzOffset) % Interval.Hour.value) / Interval.Minute.value;
+const tzOffsetString = `${tzOffsetSign}${tzOffsetHours.toString().padStart(2, "0")}:${tzOffsetMinutes.toString().padStart(2, "0")}`;
 
 export function dateFromISO(str: string) {
   return str.split(".")[0]!.replaceAll(":", "-");
 }
+
+const urlFriendlyDateSchema = z.string().brand("UrlFriendlyDate");
+type UrlFriendlyDate = z.infer<typeof urlFriendlyDateSchema>;
+
+export class AppDate extends Date {
+  public static urlFriendlySchema = urlFriendlyDateSchema.refine(
+    (v) => {
+      const parsed = AppDate.fromUrlFriendlyToISO(v);
+      const date = new AppDate(parsed);
+      return date.getTime() && date.toLocalISOString() === parsed;
+    },
+    {
+      message: "Invalid url friendly date",
+    },
+  );
+
+  public static fromUrlFriendlyToISO(str: UrlFriendlyDate) {
+    const [date, time] = str.split("T");
+
+    return `${date}T${time!.replaceAll("-", ":")}`;
+  }
+
+  public static fromUrlFriendly(str: UrlFriendlyDate) {
+    return new AppDate(AppDate.fromUrlFriendlyToISO(str));
+  }
+
+  public toUrlFriendly() {
+    return this.toLocalISOString().replaceAll(":", "-") as UrlFriendlyDate;
+  }
+
+  public toLocalISOString(this: Date) {
+    return `${new Date(this.getTime() - tzOffset).toISOString().split(".")[0]}${tzOffsetString}`;
+  }
+}
+
+const date = new AppDate();
+// eslint-disable-next-line no-console
+console.assert(
+  AppDate.fromUrlFriendly(date.toUrlFriendly()).toUrlFriendly() ===
+    date.toUrlFriendly(),
+);
+// eslint-disable-next-line no-console
+console.assert(
+  AppDate.fromUrlFriendly(date.toUrlFriendly()).getTime() ===
+    new Date(AppDate.fromUrlFriendlyToISO(date.toUrlFriendly())).getTime(),
+);
 
 export function dateToISO(str: string) {
   const [date, time] = str.split("T");
@@ -72,6 +127,3 @@ export function dateInfoWithPaddings(date: Date) {
   const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
   return { year, month, day, hours, minutes, seconds, milliseconds };
 }
-
-/** when using days start of the day should be at 00:00:00.000 */
-export const tzOffset = new Date().getTimezoneOffset() * 60 * 1000;
