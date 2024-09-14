@@ -5,12 +5,13 @@ import { defineConfig, loadEnv } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = { ...process.env, ...loadEnv(mode, "..") },
-    proxyOptions = {
-      changeOrigin: false,
-      ws: true,
-      target: `http://localhost:${env["VITE_API_PORT"]}`,
-    };
+  const env = { ...process.env, ...loadEnv(mode, "..") };
+  const proxyOptions = {
+    changeOrigin: false,
+    ws: true,
+    target: `http://localhost:${env["VITE_API_PORT"]}`,
+  };
+  process.env["VITE_BUILD_DATE"] = new Date().toISOString();
   return {
     envDir: "..",
     plugins: [tanStackRouterVite(), react()],

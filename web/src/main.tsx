@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-console
+console.log("Build date:", import.meta.env.VITE_BUILD_DATE);
+
 import "./globals.css";
 
 import { StrictMode } from "react";
