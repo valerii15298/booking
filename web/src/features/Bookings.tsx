@@ -1,21 +1,15 @@
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Separator } from "@/components/ui/separator";
 import { useApp } from "@/features/app/useApp";
 import { trpc } from "@/trpc";
 
 import { Asset } from "./Asset";
 import { DateItem } from "./DateItem";
+import { LiveSeparator, Separators } from "./Separators";
 import { Settings } from "./settings/Settings";
 
 export function AssetsBookings() {
-  const {
-    dates,
-    scrollableContainerRef,
-    startDate,
-    endDate,
-    menuPosition,
-    dateToY,
-  } = useApp();
+  const { dates, scrollableContainerRef, startDate, endDate, menuPosition } =
+    useApp();
   function betweenStartAndEnd(date: Date) {
     return date.getTime() >= startDate && date.getTime() <= endDate;
   }
@@ -53,15 +47,8 @@ export function AssetsBookings() {
     >
       {/** place for overflowing fixed content */}
       <div className="relative w-fit">
-        {dates.map((date) => (
-          <Separator
-            key={date}
-            className="absolute -translate-y-1/2"
-            style={{
-              top: dateToY(date),
-            }}
-          />
-        ))}
+        <Separators dates={dates} />
+        <LiveSeparator />
         <ResizablePanelGroup
           direction="horizontal"
           style={{ overflow: "visible" }}
