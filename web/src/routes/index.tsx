@@ -34,7 +34,7 @@ const DEFAULT_DATE_ITEM_HEIGHT = 50;
 const isMobile = /iPhone|iPad|iPod|Android/iu.test(navigator.userAgent);
 function Index() {
   const [menuPosition, setMenuPosition] = useState<MenuPosition>(
-    isMobile ? "bottom" : "top",
+    isMobile ? "bottom" : "bottom", // TODO top navbar functionality
   );
   const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();

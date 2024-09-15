@@ -33,8 +33,11 @@ export function DateItem({
           onClick={() => {
             setTooltipOpen(true);
           }}
-          className={`flex flex-col items-end justify-end overflow-hidden border-b bg-background px-2 ${dateBreakpoint ? "sticky" : ""}`}
-          style={{ height: dateItemHeight, top }}
+          className={`flex flex-col items-end justify-end overflow-hidden border-y-[0.5px] bg-background px-2 ${dateBreakpoint ? "sticky" : ""}`}
+          style={{
+            height: dateItemHeight,
+            top: dateBreakpoint ? top : undefined,
+          }}
         >
           {dateBreakpoint}
           {!dateBreakpoint && dateDelimiter.item(date)}
