@@ -53,7 +53,7 @@ export function Booking({
   return (
     <Rnd
       key={b.id}
-      className="bg-indigo-400 dark:bg-indigo-800"
+      className={`${update.isPending ? "animate-pulse" : ""} bg-indigo-400 dark:bg-indigo-800`}
       bounds="parent"
       enableResizing={enableResizing}
       size={{
