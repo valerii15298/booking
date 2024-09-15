@@ -24,7 +24,10 @@ export function AssetsBookings() {
       return assets.map((a) => ({
         ...a,
         bookings: a.bookings.filter(
-          (b) => betweenStartAndEnd(b.from) || betweenStartAndEnd(b.to),
+          (b) =>
+            betweenStartAndEnd(b.from) ||
+            betweenStartAndEnd(b.to) ||
+            (b.from.getTime() < startDate && b.to.getTime() > endDate),
         ),
       }));
     },
