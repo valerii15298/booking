@@ -11,24 +11,26 @@ const tzOffsetMinutes =
   (Math.abs(tzOffset) % Interval.Hour.value) / Interval.Minute.value;
 const tzOffsetString = `${tzOffsetSign}${tzOffsetHours.toString().padStart(2, "0")}:${tzOffsetMinutes.toString().padStart(2, "0")}`;
 
-export function dateFromISO(str: string) {
-  return str.split(".")[0]!.replaceAll(":", "-");
-}
-
 const urlFriendlyDateSchema = z.string().brand("UrlFriendlyDate");
 type UrlFriendlyDate = z.infer<typeof urlFriendlyDateSchema>;
 
 export class AppDate extends Date {
-  public static urlFriendlySchema = urlFriendlyDateSchema.refine(
-    (v) => {
-      const parsed = AppDate.fromUrlFriendlyToISO(v);
-      const date = new AppDate(parsed);
-      return date.getTime() && date.toLocalISOString() === parsed;
-    },
-    {
-      message: "Invalid url friendly date",
-    },
-  );
+  public static urlFriendlySchema = urlFriendlyDateSchema
+    .refine(
+      (v) => {
+        const parsed = new AppDate(AppDate.fromUrlFriendlyToISO(v));
+        const date = new AppDate(parsed);
+        return (
+          date.getTime() &&
+          parsed.getTime() &&
+          date.getTime() === parsed.getTime()
+        );
+      },
+      {
+        message: "Invalid url friendly date",
+      },
+    )
+    .transform((v) => AppDate.fromUrlFriendly(v).toUrlFriendly());
 
   public static fromUrlFriendlyToISO(str: UrlFriendlyDate) {
     const [date, time] = str.split("T");
@@ -59,24 +61,6 @@ console.assert(
 console.assert(
   AppDate.fromUrlFriendly(date.toUrlFriendly()).getTime() ===
     new Date(AppDate.fromUrlFriendlyToISO(date.toUrlFriendly())).getTime(),
-);
-
-export function dateToISO(str: string) {
-  const [date, time] = str.split("T");
-  return `${date}T${time!.replaceAll("-", ":")}Z`;
-}
-
-export const dateSchema = z.string().refine(
-  (v) => {
-    const parsed = dateToISO(v);
-    const date = new Date(parsed);
-    return (
-      date.getTime() && date.toISOString().split(".")[0] === parsed.slice(0, -1)
-    );
-  },
-  {
-    message: "Invalid date",
-  },
 );
 
 export function roundDate(ts: number, interval: IntervalBrand) {

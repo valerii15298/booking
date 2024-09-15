@@ -3,7 +3,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useId, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-import { dateFromISO, formatDateTime, roundDate } from "@/atoms/dates";
+import { AppDate, formatDateTime, roundDate } from "@/atoms/dates";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -64,7 +64,7 @@ export function CreateBooking({
             () =>
               void navigate({
                 search: {
-                  date: dateFromISO(new Date(date).toISOString()),
+                  date: new AppDate(date).toUrlFriendly(),
                   focusBookingId: id,
                 },
               }),

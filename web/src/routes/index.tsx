@@ -2,21 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import {
-  dateFromISO,
-  dateSchema,
-  dateToISO,
-  getDates,
-  roundDate,
-  tzOffset,
-} from "@/atoms/dates";
+import { AppDate, getDates, roundDate, tzOffset } from "@/atoms/dates";
 import { Interval } from "@/atoms/interval";
 import type { MenuPosition } from "@/features/app/app";
 import { app } from "@/features/app/app";
 import { AssetsBookings } from "@/features/Bookings";
 
 const validateSearch = z.object({
-  date: dateSchema.optional().catch(undefined),
+  date: AppDate.urlFriendlySchema.optional().catch(undefined),
   focusBookingId: z.number().optional().catch(undefined),
 });
 
@@ -45,7 +38,9 @@ function Index() {
   );
   const navigate = Route.useNavigate();
   const { date: rawDate } = Route.useSearch();
-  const date = rawDate ? new Date(dateToISO(rawDate)).getTime() : Date.now();
+  const date = rawDate
+    ? AppDate.fromUrlFriendly(rawDate).getTime()
+    : Date.now();
 
   const maxDateItemHeight = Math.floor(window.innerHeight / 3);
   const minDateItemHeight = Math.max(
@@ -97,7 +92,7 @@ function Index() {
     scrollBehaviorRef.current = "instant";
     // TODO return promise here
     void navigate({
-      search: { date: dateFromISO(new Date(currDate).toISOString()) },
+      search: { date: new AppDate(currDate).toUrlFriendly() },
     });
   }, [navigate, yToDate]);
 
