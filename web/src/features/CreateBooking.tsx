@@ -3,7 +3,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useId, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-import { AppDate, formatDateTime, roundDate } from "@/atoms/dates";
+import { AppDate, roundDate } from "@/atoms/dates";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,13 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Form, FormField } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import type { UseState } from "@/lib/types";
 import { trpc } from "@/trpc";
 import { type Types, zod } from "@/zod";
 
 import { useApp } from "./app/useApp";
+import { EditBooking } from "./EditBooking";
 
 const currDate = new Date();
 
@@ -87,6 +86,12 @@ export function CreateBooking({
     resolver: zodResolver(zod.bookingInput),
   });
 
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    void form.handleSubmit((data, e) => {
+      e?.preventDefault();
+      createBooking.mutate(data);
+    })(e);
+  }
   return (
     <Dialog
       open={open}
@@ -110,69 +115,7 @@ export function CreateBooking({
             Book <b>{name}</b> for a specific date and time
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form
-            id={formId}
-            onSubmit={(e) => {
-              void form.handleSubmit((data, e) => {
-                e?.preventDefault();
-                createBooking.mutate(data);
-              })(e);
-            }}
-            className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between"
-          >
-            <input type="text" className="hidden" />
-            <FormField
-              control={form.control}
-              name="from"
-              render={({ field }) => (
-                <Input
-                  step={dateDelimiter.prev().value / 1000}
-                  type={dateDelimiter.prev().inputType}
-                  className="w-fit"
-                  {...field}
-                  max={formatDateTime(
-                    new Date(
-                      form.watch("to").getTime() - dateDelimiter.prev().value,
-                    ),
-                  )}
-                  value={formatDateTime(field.value)}
-                  onChange={(e) => {
-                    const ts = new Date(e.target.value).getTime();
-                    const roundedTs = roundDate(ts, dateDelimiter.prev().value);
-                    field.onChange(new Date(roundedTs));
-                  }}
-                  required
-                />
-              )}
-            />
-            <span className="hidden whitespace-nowrap sm:inline">{"->"}</span>
-            <FormField
-              control={form.control}
-              name="to"
-              render={({ field }) => (
-                <Input
-                  step={dateDelimiter.prev().value / 1000}
-                  type={dateDelimiter.prev().inputType}
-                  className="w-fit"
-                  {...field}
-                  min={formatDateTime(
-                    new Date(
-                      form.watch("from").getTime() + dateDelimiter.prev().value,
-                    ),
-                  )}
-                  value={formatDateTime(field.value)}
-                  onChange={(e) => {
-                    const ts = new Date(e.target.value).getTime();
-                    const roundedTs = roundDate(ts, dateDelimiter.prev().value);
-                    field.onChange(new Date(roundedTs));
-                  }}
-                  required
-                />
-              )}
-            />
-          </form>
-        </Form>
+        <EditBooking formId={formId} form={form} onSubmit={onSubmit} />
         <DialogFooter>
           <Button
             disabled={form.formState.disabled}

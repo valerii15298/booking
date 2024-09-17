@@ -1,5 +1,5 @@
 import { getRouteApi } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import type { ResizeEnable } from "react-rnd";
 import { Rnd } from "react-rnd";
 
@@ -10,8 +10,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useApp } from "@/features/app/useApp";
+import { invokeOnDoubleCall } from "@/lib/invokeOnDoubleCall";
 import { trpc } from "@/trpc";
 import type { Types } from "@/zod";
+
+import { UpdateBookingDialog } from "./UpdateBooking";
 
 const enableResizing: ResizeEnable = {
   top: true,
@@ -37,6 +40,21 @@ export function Booking({
   const ref = useRef<HTMLButtonElement | null>(null);
   const { focusBookingId } = routeApi.useSearch();
 
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    // Escape hack since click/double click do not work inside Rnd on mobile
+    const parent = ref.current?.parentElement;
+    if (!parent) return;
+    const onDoubleClick = invokeOnDoubleCall(() => {
+      setOpen(true);
+    });
+    parent.addEventListener("pointerup", onDoubleClick);
+    return () => {
+      parent.removeEventListener("pointerup", onDoubleClick);
+    };
+  }, []);
+
   useEffect(() => {
     if (booking.id === focusBookingId) {
       ref.current?.focus();
@@ -51,62 +69,64 @@ export function Booking({
     return { from, to };
   }
   return (
-    <Rnd
-      key={b.id}
-      className={`${update.isPending ? "animate-pulse" : ""} bg-indigo-400 dark:bg-indigo-800`}
-      bounds="parent"
-      enableResizing={enableResizing}
-      size={{
-        width: "100%",
-        height: dateToY(b.to.getTime()) - dateToY(b.from.getTime()),
-      }}
-      dragAxis="y"
-      position={{
-        x: 0,
-        y: dateToY(b.from.getTime()),
-      }}
-      onDragStart={() => {
-        setIsDragging(true);
-      }}
-      onDragStop={(_, { y }) => {
-        // need to rerender component to prevent flickering after drag stop
-        setIsDragging(false);
-        if (isResizing) return;
-        const { from, to } = getDragDates(y);
-        update.mutate({ ...b, from, to, updatedAt: new Date() });
-      }}
-      onResizeStart={() => {
-        setIsResizing(true);
-      }}
-      // eslint-disable-next-line @typescript-eslint/max-params
-      onResizeStop={(_e, _direction, ref, _delta, position) => {
-        setIsResizing(false);
-        update.mutate({
-          ...b,
-          from: new Date(yToDate(position.y)),
-          to: new Date(yToDate(position.y + ref.clientHeight)),
-          updatedAt: new Date(),
-        });
-      }}
-    >
-      <Tooltip>
-        <TooltipTrigger
-          tabIndex={tabIndex}
-          ref={ref}
-          className="grid h-full w-full place-items-center overflow-hidden focus:outline focus:outline-1 focus-visible:outline-foreground"
-        >
-          {b.id} {b.from.toLocaleString()}
-          {" -> "}
-          {b.to.toLocaleString()}
-        </TooltipTrigger>
-        <TooltipPortal>
-          <TooltipContent side="left">
-            {b.from.toLocaleString()}
-            <br />
+    <Fragment key={b.id}>
+      <UpdateBookingDialog {...booking} open={open} setOpen={setOpen} />
+      <Rnd
+        className={`${update.isPending ? "animate-pulse" : ""} bg-indigo-400 dark:bg-indigo-800`}
+        bounds="parent"
+        enableResizing={enableResizing}
+        size={{
+          width: "100%",
+          height: dateToY(b.to.getTime()) - dateToY(b.from.getTime()),
+        }}
+        dragAxis="y"
+        position={{
+          x: 0,
+          y: dateToY(b.from.getTime()),
+        }}
+        onDragStart={() => {
+          setIsDragging(true);
+        }}
+        onDragStop={(_, { y }) => {
+          // need to rerender component to prevent flickering after drag stop
+          setIsDragging(false);
+          if (isResizing) return;
+          const { from, to } = getDragDates(y);
+          update.mutate({ ...b, from, to, updatedAt: new Date() });
+        }}
+        onResizeStart={() => {
+          setIsResizing(true);
+        }}
+        // eslint-disable-next-line @typescript-eslint/max-params
+        onResizeStop={(_e, _direction, ref, _delta, position) => {
+          setIsResizing(false);
+          update.mutate({
+            ...b,
+            from: new Date(yToDate(position.y)),
+            to: new Date(yToDate(position.y + ref.clientHeight)),
+            updatedAt: new Date(),
+          });
+        }}
+      >
+        <Tooltip>
+          <TooltipTrigger
+            tabIndex={tabIndex}
+            ref={ref}
+            className="grid h-full w-full place-items-center overflow-hidden focus:outline focus:outline-1 focus-visible:outline-foreground"
+          >
+            {b.id} {b.from.toLocaleString()}
+            {" -> "}
             {b.to.toLocaleString()}
-          </TooltipContent>
-        </TooltipPortal>
-      </Tooltip>
-    </Rnd>
+          </TooltipTrigger>
+          <TooltipPortal>
+            <TooltipContent side="left">
+              {b.from.toLocaleString()}
+              <br />
+              {b.to.toLocaleString()}
+            </TooltipContent>
+          </TooltipPortal>
+        </Tooltip>
+      </Rnd>
+    </Fragment>
   );
 }

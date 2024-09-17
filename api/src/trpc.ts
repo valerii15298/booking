@@ -54,13 +54,16 @@ export const appRouter = t.router({
     update: t.procedure
       .input(zod.booking)
       .mutation(async ({ input: { id, ...b }, ctx: { db, updateBooking } }) => {
+        const updatedAt = new Date(
+          Math.min(b.updatedAt.getTime(), new Date().getTime()),
+        ); // TODO handle on db side, insert current date if updatedAt > now()
         await db
           .update(s.bookings)
           .set(b)
           .where(
             d.and(
               d.eq(s.bookings.id, id),
-              d.lt(s.bookings.updatedAt, b.updatedAt),
+              d.lt(s.bookings.updatedAt, updatedAt),
             ),
           );
         updateBooking.forEach((emit) => {
