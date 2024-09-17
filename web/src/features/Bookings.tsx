@@ -46,7 +46,7 @@ export function AssetsBookings() {
       className="h-full overflow-y-auto overscroll-none hide-scrollbar"
     >
       {/** place for overflowing fixed content */}
-      <div className="relative w-fit">
+      <div className="relative w-fit min-w-full">
         <Separators dates={dates} />
         <LiveSeparator />
         <ResizablePanelGroup
