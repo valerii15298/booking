@@ -33,6 +33,11 @@ const PRELOAD_COUNT = 100;
 const DEFAULT_DATE_ITEM_HEIGHT = 50;
 const isMobile = /iPhone|iPad|iPod|Android/iu.test(navigator.userAgent);
 function Index() {
+  const [_, rerenderRaw] = useState(false);
+  const rerender = useCallback(() => {
+    rerenderRaw((a) => !a);
+  }, []);
+
   const [menuPosition, setMenuPosition] = useState<MenuPosition>(
     isMobile ? "bottom" : "bottom", // TODO top navbar functionality
   );
@@ -145,6 +150,7 @@ function Index() {
   return (
     <app.Provider
       value={{
+        rerender,
         startDate,
         endDate,
         dates,

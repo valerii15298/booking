@@ -16,6 +16,7 @@ export type App = {
   dates: number[];
   scrollableContainerRef: React.RefObject<HTMLElement>;
   preload: () => void;
+  rerender: () => void;
 } & UseState<number, "dateItemHeight"> &
   UseState<MenuPosition, "menuPosition"> &
   UseState<Interval, "dateDelimiter">;
