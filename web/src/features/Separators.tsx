@@ -8,14 +8,15 @@ export function LiveSeparator() {
   const { dateToY, startDate, endDate, dateDelimiter } = useApp();
   const isVisible = Date.now() >= startDate && Date.now() <= endDate;
   const [time, setTime] = useState(Date.now());
+  const intervalMs = dateDelimiter.prev().value;
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(Date.now());
-    }, dateDelimiter.value);
+    }, intervalMs);
     return () => {
       clearInterval(interval);
     };
-  }, [dateDelimiter.value]);
+  }, [intervalMs]);
 
   if (!isVisible) return null;
   return (

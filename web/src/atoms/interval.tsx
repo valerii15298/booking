@@ -151,8 +151,8 @@ const Week = {
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Interval = {
   // // ios safari only allows selection up to the minute level
-  // Millisecond,
-  // Second,
+  Millisecond,
+  Second,
   Minute,
   Hour,
   Day,
