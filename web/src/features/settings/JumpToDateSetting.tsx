@@ -11,11 +11,11 @@ export function JumpToDateSetting() {
   const date = dateRaw ? AppDate.fromUrlFriendly(dateRaw) : new AppDate();
   return (
     <Label className="flex items-center justify-between">
-      Jump To Another Date:
+      <span className="mx-auto">Jump To Date:</span>
       <Input
         type="datetime-local"
         className="w-fit"
-        value={formatDateTime(date)}
+        value={formatDateTime(date).split(".")[0]} // TODO move formatDateTime to a util/AppDate class
         onChange={(e) => {
           void navigate({
             search: { date: new AppDate(e.target.value).toUrlFriendly() },

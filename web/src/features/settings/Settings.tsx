@@ -44,7 +44,7 @@ export function Settings() {
       <DialogContent ref={ref} className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-balance">
             Choose a preferred theme, date interval, zoom level, jump to date,
             and more
           </DialogDescription>
