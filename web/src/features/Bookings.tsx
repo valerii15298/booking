@@ -53,10 +53,7 @@ export function AssetsBookings() {
           direction="horizontal"
           style={{ overflow: "visible" }}
         >
-          <ResizablePanel
-            className="sticky left-0 z-20"
-            style={{ overflow: "visible" }}
-          >
+          <nav className="sticky left-0 z-20">
             {menuPosition === "top" && <Settings />}
             <ul className="bg-background">
               <DateItem key={dates[0]} date={new Date(dates[0]!)} first />
@@ -65,8 +62,8 @@ export function AssetsBookings() {
               ))}
             </ul>
             {menuPosition === "bottom" && <Settings />}
-          </ResizablePanel>
-
+          </nav>
+          <ResizablePanel defaultSize={0} />
           {assets.map((a) => (
             <Asset {...a} key={a.id} />
           ))}
