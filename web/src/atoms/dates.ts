@@ -35,7 +35,7 @@ export class AppDate extends Date {
   public static fromUrlFriendlyToISO(str: UrlFriendlyDate) {
     const [date, time] = str.split("T");
 
-    return `${date}T${time!.replaceAll("-", ":")}`;
+    return `${date}T${time?.replaceAll("-", ":")}`;
   }
 
   public static fromUrlFriendly(str: UrlFriendlyDate) {
