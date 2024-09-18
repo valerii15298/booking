@@ -47,7 +47,7 @@ export function BookingDialog({
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     void form.handleSubmit((data, e) => {
       e?.preventDefault();
-      void updateBooking.mutateAsync(data);
+      void updateBooking.mutateAsync({ ...data, updatedAt: new Date() });
     })(e);
   }
   return (
