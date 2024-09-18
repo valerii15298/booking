@@ -50,7 +50,7 @@ export function CreateBooking({
       setInitialDate(null);
       const diff = to.getTime() - from.getTime();
       const middle = from.getTime() + diff / 2;
-      // scrollHeight + clientHeight/2 = middleHeightDate
+      // scrollTop + clientHeight/2 = middleHeightDate
       const clientHeightInterval =
         yToDate(scrollableContainerRef.current.clientHeight) - yToDate(0);
       const date = middle - clientHeightInterval / 2;

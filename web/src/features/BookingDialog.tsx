@@ -26,15 +26,18 @@ export function BookingDialog({
   const utils = trpc.useUtils();
   const formId = useId();
 
+  async function onSettled() {
+    return utils.assets.list.invalidate();
+  }
+
   const deleteBooking = trpc.bookings.delete.useMutation({
-    async onSettled() {
-      return utils.assets.list.invalidate();
-    },
+    onSettled,
   });
 
   const updateBooking = trpc.bookings.update.useMutation({
-    async onSettled() {
-      return utils.assets.list.invalidate();
+    onSettled,
+    onSuccess() {
+      setOpen(false);
     },
   });
 
@@ -47,7 +50,7 @@ export function BookingDialog({
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     void form.handleSubmit((data, e) => {
       e?.preventDefault();
-      void updateBooking.mutateAsync({ ...data, updatedAt: new Date() });
+      updateBooking.mutate({ ...data, updatedAt: new Date() });
     })(e);
   }
   return (
@@ -67,7 +70,7 @@ export function BookingDialog({
           </DialogDescription>
         </DialogHeader>
         <EditBooking formId={formId} form={form} onSubmit={onSubmit} />
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button
             disabled={form.formState.disabled}
             variant={"destructive"}

@@ -43,13 +43,18 @@ export const appRouter = t.router({
     // CRUD
     create: t.procedure
       .input(zod.bookingInput)
-      .mutation(async ({ input, ctx: { db } }) =>
-        db
+      .mutation(async ({ input, ctx: { db, updateBooking } }) => {
+        const createdBooking = await db
           .insert(s.bookings)
           .values(input)
           .returning()
-          .then((r) => r[0]!),
-      ),
+          .then((r) => r[0]!);
+
+        updateBooking.forEach((emit) => {
+          emit.next(createdBooking);
+        });
+        return createdBooking;
+      }),
 
     update: t.procedure
       .input(zod.booking)

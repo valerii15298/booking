@@ -32,10 +32,17 @@ export function AssetsBookings() {
     onData(data) {
       utils.assets.list.setData(undefined, (prev) => {
         if (!prev) return prev;
-        return prev.map((a) => ({
-          ...a,
-          bookings: a.bookings.map((b) => (b.id === data.id ? data : b)),
-        }));
+        return prev.map((a) => {
+          if (a.id !== data.assetId) return a;
+
+          const bookingExist = a.bookings.some((b) => b.id === data.id);
+          if (!bookingExist) return { ...a, bookings: [...a.bookings, data] };
+
+          return {
+            ...a,
+            bookings: a.bookings.map((b) => (b.id === data.id ? data : b)),
+          };
+        });
       });
     },
   });
