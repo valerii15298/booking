@@ -33,7 +33,6 @@ export function EditBooking<T extends Types.BookingInput = Types.BookingInput>({
           name="from"
           render={({ field }) => (
             <Input
-              step={dateDelimiter.prev().value / 1000}
               type={dateDelimiter.prev().inputType}
               className="w-fit"
               {...field}
@@ -58,7 +57,6 @@ export function EditBooking<T extends Types.BookingInput = Types.BookingInput>({
           name="to"
           render={({ field }) => (
             <Input
-              step={dateDelimiter.prev().value / 1000}
               type={dateDelimiter.prev().inputType}
               className="w-fit"
               {...field}
