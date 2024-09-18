@@ -14,7 +14,7 @@ import { invokeOnDoubleCall } from "@/lib/invokeOnDoubleCall";
 import { trpc } from "@/trpc";
 import type { Types } from "@/zod";
 
-import { UpdateBookingDialog } from "./UpdateBooking";
+import { BookingDialog } from "./BookingDialog";
 
 const enableResizing: ResizeEnable = {
   top: true,
@@ -70,7 +70,7 @@ export function Booking({
   }
   return (
     <Fragment key={b.id}>
-      <UpdateBookingDialog {...booking} open={open} setOpen={setOpen} />
+      <BookingDialog {...booking} open={open} setOpen={setOpen} />
       <Rnd
         className={`${update.isPending ? "animate-pulse" : ""} bg-indigo-400 dark:bg-indigo-800`}
         bounds="parent"

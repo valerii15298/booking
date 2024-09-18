@@ -17,7 +17,7 @@ import { type Types, zod } from "@/zod";
 
 import { EditBooking } from "./EditBooking";
 
-export function UpdateBookingDialog({
+export function BookingDialog({
   open,
   setOpen,
   ...b
@@ -25,6 +25,12 @@ export function UpdateBookingDialog({
   const ref = useRef<HTMLDivElement | null>(null);
   const utils = trpc.useUtils();
   const formId = useId();
+
+  const deleteBooking = trpc.bookings.delete.useMutation({
+    async onSettled() {
+      return utils.assets.list.invalidate();
+    },
+  });
 
   const updateBooking = trpc.bookings.update.useMutation({
     async onSettled() {
@@ -34,7 +40,7 @@ export function UpdateBookingDialog({
 
   const form = useForm({
     values: b,
-    disabled: updateBooking.isPending,
+    disabled: updateBooking.isPending || deleteBooking.isPending,
     resolver: zodResolver(zod.booking),
   });
 
@@ -57,11 +63,19 @@ export function UpdateBookingDialog({
         <DialogHeader>
           <DialogTitle>Booking #{b.id}</DialogTitle>
           <DialogDescription className="text-balance">
-            Update booking data
+            Update booking data or delete booking entirely
           </DialogDescription>
         </DialogHeader>
         <EditBooking formId={formId} form={form} onSubmit={onSubmit} />
         <DialogFooter>
+          <Button
+            variant={"destructive"}
+            onClick={() => {
+              deleteBooking.mutate(b.id);
+            }}
+          >
+            Delete
+          </Button>
           <Button
             disabled={form.formState.disabled}
             form={formId}
