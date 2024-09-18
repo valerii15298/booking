@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { z } from "zod";
 
 import { AppDate, getDates, roundDate, tzOffset } from "@/atoms/dates";
@@ -35,7 +36,9 @@ const isMobile = /iPhone|iPad|iPod|Android/iu.test(navigator.userAgent);
 function Index() {
   const [_, rerenderRaw] = useState(false);
   const rerender = useCallback(() => {
-    rerenderRaw((a) => !a);
+    flushSync(() => {
+      rerenderRaw((a) => !a);
+    });
   }, []);
 
   const [menuPosition, setMenuPosition] = useState<MenuPosition>(
