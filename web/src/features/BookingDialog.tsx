@@ -69,6 +69,7 @@ export function BookingDialog({
         <EditBooking formId={formId} form={form} onSubmit={onSubmit} />
         <DialogFooter>
           <Button
+            disabled={form.formState.disabled}
             variant={"destructive"}
             onClick={() => {
               deleteBooking.mutate(b.id);
