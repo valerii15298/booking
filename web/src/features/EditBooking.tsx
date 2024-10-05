@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
-import { formatDateTime, roundDate } from "@/atoms/dates";
+import { formatDateTime } from "@/atoms/dates";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { Types } from "@/zod";
@@ -33,6 +33,7 @@ export function EditBooking<T extends Types.BookingInput = Types.BookingInput>({
           name="from"
           render={({ field }) => (
             <Input
+              step={0.001}
               type={dateDelimiter.prev().inputType}
               className="w-fit"
               {...field}
@@ -43,9 +44,7 @@ export function EditBooking<T extends Types.BookingInput = Types.BookingInput>({
               )}
               value={formatDateTime(field.value)}
               onChange={(e) => {
-                const ts = new Date(e.target.value).getTime();
-                const roundedTs = roundDate(ts, dateDelimiter.prev().value);
-                field.onChange(new Date(roundedTs));
+                field.onChange(new Date(e.target.value));
               }}
               required
             />
@@ -57,6 +56,7 @@ export function EditBooking<T extends Types.BookingInput = Types.BookingInput>({
           name="to"
           render={({ field }) => (
             <Input
+              step={0.001}
               type={dateDelimiter.prev().inputType}
               className="w-fit"
               {...field}
@@ -67,9 +67,7 @@ export function EditBooking<T extends Types.BookingInput = Types.BookingInput>({
               )}
               value={formatDateTime(field.value)}
               onChange={(e) => {
-                const ts = new Date(e.target.value).getTime();
-                const roundedTs = roundDate(ts, dateDelimiter.prev().value);
-                field.onChange(new Date(roundedTs));
+                field.onChange(new Date(e.target.value));
               }}
               required
             />

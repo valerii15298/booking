@@ -11,8 +11,9 @@ export function JumpToDateSetting() {
   const date = dateRaw ? AppDate.fromUrlFriendly(dateRaw) : new AppDate();
   return (
     <Label className="flex items-center justify-between">
-      <span className="mx-auto">Jump To Date:</span>
+      <span>Jump To Date:</span>
       <Input
+        step={0.001}
         type="datetime-local"
         className="w-fit"
         value={formatDateTime(date).split(".")[0]} // TODO move formatDateTime to a util/AppDate class
