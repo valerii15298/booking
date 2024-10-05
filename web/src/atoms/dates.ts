@@ -47,7 +47,7 @@ export class AppDate extends Date {
   }
 
   public toLocalISOString(this: Date) {
-    return `${new Date(this.getTime() - tzOffset).toISOString().split(".")[0]}${tzOffsetString}`;
+    return `${new Date(this.getTime() - tzOffset).toISOString().split("Z")[0]}${tzOffsetString}`;
   }
 }
 
