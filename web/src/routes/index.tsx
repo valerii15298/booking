@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { z } from "zod";
@@ -8,6 +8,8 @@ import { Interval } from "@/atoms/interval";
 import type { MenuPosition } from "@/features/app/app";
 import { app } from "@/features/app/app";
 import { AssetsBookings } from "@/features/Bookings";
+
+const routeApi = getRouteApi("/");
 
 const validateSearch = z.object({
   date: AppDate.urlFriendlySchema.optional().catch(undefined),
@@ -21,13 +23,6 @@ function isEdgeScroll(el: HTMLDivElement) {
     el.scrollTop + el.clientHeight > el.scrollHeight - SHIFT
   );
 }
-
-export const Route = createFileRoute("/")({
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  component: Index,
-  validateSearch,
-  loader: async (c) => c.context.utils.assets.list.ensureData(),
-});
 
 const DEFAULT_SCROLL_BEHAVIOR = "smooth" satisfies ScrollBehavior;
 const PRELOAD_COUNT = 100;
@@ -44,8 +39,8 @@ function Index() {
   const [menuPosition, setMenuPosition] = useState<MenuPosition>(
     isMobile ? "bottom" : "bottom", // TODO top navbar functionality
   );
-  const navigate = Route.useNavigate();
-  const { date: rawDate } = Route.useSearch();
+  const navigate = routeApi.useNavigate();
+  const { date: rawDate } = routeApi.useSearch();
   const date = rawDate
     ? AppDate.fromUrlFriendly(rawDate).getTime()
     : Date.now();
@@ -175,3 +170,9 @@ function Index() {
     </app.Provider>
   );
 }
+
+export const Route = createFileRoute("/")({
+  component: () => <Index />,
+  validateSearch,
+  loader: async (c) => c.context.utils.assets.list.ensureData(),
+});
